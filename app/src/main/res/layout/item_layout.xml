@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+ >
+
+    <data>
+
+        <variable
+            name="now_playing"
+            type="com.example.tvshows.data.network.response.nowPlaying.Result_NowPlaying" />
+    </data>
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true"
+    android:id="@+id/main_item_layout"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:layout_margin="6dp"
+     >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        >
+
+
+        <TextView
+            android:id="@+id/name"
+            android:textColor="@color/textColorPrimary"
+            android:layout_width="match_parent"
+            tools:text="dddddddd"
+            android:text="@{now_playing.name}"
+            android:textSize="14sp"
+            android:background="@color/colorPrimary"
+            android:gravity="center"
+            android:layout_height="23sp" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:background="@drawable/bottomcircled_bordered"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0">
+
+            <ImageView
+                android:id="@+id/image"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                app:imageUrl="@{now_playing.backdrop_path}"
+                app:progressbar="@{progressBar}"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+
+                android:layout_width="90sp"
+                android:layout_height="110sp"
+                android:foregroundTint="@color/textColorPrimary"
+                android:backgroundTint="@color/textColorPrimary"
+                android:layout_centerInParent="true"
+                app:layout_constraintBottom_toTopOf="@+id/image"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0"
+                tools:layout_editor_absoluteX="0dp" />
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginEnd="10dp"
+                android:paddingEnd="8dp"
+                android:clipToPadding="false"
+                android:elevation="30dp"
+                android:paddingBottom="2dp"
+                android:paddingStart="5dp"
+                android:background="@drawable/circled_bordered"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/star"
+                    android:src="@drawable/star"
+                    android:contentDescription="im" />
+                <TextView
+                    android:layout_centerInParent="true"
+                    android:textColor="@android:color/white"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@+id/star"
+                    tools:text="9.4"
+                    android:text="@{Double.toString(now_playing.vote_average)}"/>
+            </RelativeLayout>
+
+
+        </RelativeLayout>
+
+
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="tvShow"
+            type="com.example.tvshows.data.network.response.details.TvShowDetails" />
+
+        <variable
+            name="viewmodel"
+            type="com.example.tvshows.ui.favorites.FavoritesViewModel" />
+    </data>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="300dp"
+        android:background="@android:color/transparent">
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/watchlist_layout"
+            android:layout_width="190dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/circled_bordered"
+            android:paddingBottom="15sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/secCard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                app:cardCornerRadius="15dp"
+                app:cardElevation="0dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/image_watchlist"
+                    android:layout_width="96dp"
+                    android:layout_height="151dp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/clapperboard"
+                    app:imageWatchlist="@{tvShow.poster_path}" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_gravity="bottom|end"
+
+
+                    android:background="@drawable/bottomcircled_bordered_details"
+                    android:clipToPadding="false"
+                    android:elevation="30dp"
+                    android:paddingStart="5dp"
+                    android:paddingEnd="8dp"
+                    android:paddingBottom="2dp">
+
+                    <ImageView
+                        android:id="@+id/star"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="im"
+                        android:src="@drawable/star" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:layout_toEndOf="@+id/star"
+                        android:text="9.4"
+                        android:textColor="@android:color/white"
+                        tools:text="9.4" />
+                </RelativeLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+
+            <TextView
+                android:id="@+id/name_watchlist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:background="@color/colorAccent"
+                android:padding="3dp"
+                android:textColor="@color/textColorPrimary"
+                android:textSize="14sp"
+                app:Stringifnull="@{tvShow.name}"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/secCard"
+                tools:text="Prison break" />
+
+            <TextView
+                android:id="@+id/date_watchlist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="11dp"
+                android:background="@color/colorAccent"
+                android:padding="3dp"
+                android:textColor="@color/textColorPrimary"
+                android:textSize="14sp"
+                app:Stringifnull="@{tvShow.next_episode_to_air.air_date}"
+                app:layout_constraintStart_toStartOf="@+id/episode_watchlist"
+                app:layout_constraintTop_toBottomOf="@+id/episode_watchlist"
+                tools:text="13/3/2010" />
+
+            <TextView
+                android:id="@+id/episode_watchlist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="9dp"
+                android:background="@color/colorAccent"
+                android:padding="3dp"
+                android:text='@{tvShow.next_episode_to_air.episode_number==0 ? "-": `Episode: `+tvShow.next_episode_to_air.episode_number }'
+                android:textColor="@color/textColorPrimary"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="@+id/name_watchlist"
+                app:layout_constraintTop_toBottomOf="@+id/name_watchlist"
+                tools:text="Episode 8" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!--    <ImageView-->
+        <!--        android:id="@+id/notification_icon"-->
+        <!--        android:layout_width="46dp"-->
+        <!--        android:layout_height="51dp"-->
+        <!--        android:layout_marginTop="88dp"-->
+        <!--        android:background="@drawable/oval_watchlist"-->
+        <!--        android:padding="7dp"-->
+        <!--        android:scaleType="fitXY"-->
+        <!--        android:src="@drawable/ic_event"-->
+        <!--        app:layout_constraintEnd_toEndOf="@+id/watchlist_layout"-->
+        <!--        app:layout_constraintStart_toEndOf="@+id/watchlist_layout"-->
+        <!--        app:layout_constraintTop_toTopOf="parent" />-->
+
+        <ImageView
+            android:id="@+id/delete_icon"
+            android:layout_width="46dp"
+            android:layout_height="51dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/oval_watchlist"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:padding="7dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/delete"
+            app:layout_constraintEnd_toEndOf="@+id/watchlist_layout"
+            app:layout_constraintHorizontal_bias="0.36"
+            app:layout_constraintStart_toEndOf="@+id/watchlist_layout"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
+
+
+
+
+
+
+

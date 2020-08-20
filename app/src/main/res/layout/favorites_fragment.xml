@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.favorites.FavoritesFragment">
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="16dp"
+        android:elevation="8dp"
+         android:id="@+id/nested_favorites"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="16dp">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_fav"
+            android:layout_width="match_parent"
+            android:scrollbars="horizontal"
+            android:scrollbarThumbVertical="@drawable/scrollbar_style"
+            android:layout_height="match_parent" />
+
+    </androidx.core.widget.NestedScrollView>
+
+    <TextView
+        android:id="@+id/nowShowFound_fav"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+
+        android:background="@color/colorPrimary"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:textSize="26sp"
+        android:textColor="@color/textColorPrimary"
+        android:text="No Tv shows found!" />
+
+</RelativeLayout >

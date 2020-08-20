@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/now_playing"
+            android:icon="@drawable/cinema"
+            android:title="@string/now_playing" />
+
+
+        <item android:id="@+id/Popular"
+            android:title="@string/most_popular"
+            android:icon="@drawable/popular"
+            />
+
+        <item android:id="@+id/Top_Rated"
+            android:title="@string/top_rated"
+            android:icon="@drawable/top"
+
+            />
+
+
+
+
+    <item android:title="@string/more" >
+        <menu>
+            <item android:id="@+id/watchlist"
+                android:icon="@drawable/watchlist"
+                android:title="@string/watchlist"
+                />
+            <item android:id="@+id/favorites"
+                android:title="@string/favorites"
+                android:icon="@drawable/favorite"
+                 />
+            <item android:id="@+id/seen"
+                 android:icon="@drawable/seen"
+                android:title="@string/seen"
+                />
+            <item android:id="@+id/settings"
+                android:icon="@drawable/settings"
+
+                android:title="@string/settings"
+                />
+
+        </menu>
+    </item>
+    </group>
+</menu>
