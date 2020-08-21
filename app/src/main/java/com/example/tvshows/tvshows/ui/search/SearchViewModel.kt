@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tvshows.data.RemoteRepository
 import com.example.tvshows.data.network.response.nowPlaying.NowPlaying
-import com.example.tvshows.utils.Extension_Utils.Companion.toast
+import com.example.tvshows.utils.Extension_Utils.Companion.error_toast
 import kotlinx.coroutines.launch
 
 class SearchViewModel(private val remoteRepository: RemoteRepository, var context: Context) : ViewModel() {
@@ -16,9 +16,9 @@ class SearchViewModel(private val remoteRepository: RemoteRepository, var contex
         viewModelScope.launch {
             try {
                 searched.value=remoteRepository.searchTvShows(page, query)
-                context.toast(remoteRepository.searchTvShows(page, query).resultNowPlayings.size.toString())
+             //   context.error_toast(remoteRepository.searchTvShows(page, query).resultNowPlayings.size.toString())
             } catch (ex: Exception) {
-                context.toast(ex.message.toString())
+                context.error_toast(ex.message.toString())
 
             }
         }

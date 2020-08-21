@@ -21,10 +21,14 @@ import com.example.tvshows.data.RemoteRepository
 import com.example.tvshows.data.local_repository
 import com.example.tvshows.data.network.response.details.TvShowDetails
 import com.example.tvshows.tvshows.ui.show_details.ClickCallback
+import com.example.tvshows.utils.Extension_Utils.Companion.error_toast
+import com.example.tvshows.utils.Extension_Utils.Companion.info_toast
 import com.example.tvshows.utils.Extension_Utils.Companion.setGone
 import com.example.tvshows.utils.Extension_Utils.Companion.setVisible
-import com.example.tvshows.utils.Extension_Utils.Companion.toast
+import com.example.tvshows.utils.Extension_Utils.Companion.success_toast
+import com.example.tvshows.utils.Extension_Utils.Companion.warning_toast
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import es.dmoral.toasty.Toasty
 import kotlinx.android.synthetic.main.layout_bottom_sheet.view.*
 import kotlinx.android.synthetic.main.season_overview_dialog.view.*
 import kotlinx.coroutines.launch
@@ -47,7 +51,7 @@ class ShowDetailsViewModel(var remoteRepository: RemoteRepository, var context: 
     fun getTvShowDetails(id: String, currentFragment: String?) {
         viewModelScope.launch {
             try {
-                if(currentFragment.equals("watchList")){
+                if(currentFragment.equals("watchList") || currentFragment.equals("favorites") || currentFragment.equals("seen")){
                     currentTvShow = local_repository.getTvShowDetails(id)
                 }else {
                     currentTvShow = remoteRepository.getTvShowDetails(id)
@@ -55,7 +59,7 @@ class ShowDetailsViewModel(var remoteRepository: RemoteRepository, var context: 
 
                 details_.value = currentTvShow
             } catch (ex: Exception) {
-                context.toast(ex.message.toString())
+                context.error_toast(ex.message.toString())
             }
         }
     }
@@ -104,8 +108,17 @@ class ShowDetailsViewModel(var remoteRepository: RemoteRepository, var context: 
 
     fun addTodatabase(current_fragment: String, dialog: BottomSheetDialog){
         currentTvShow.currentFragment=current_fragment
-        local_repository.insertTvshowDetailstoDb(currentTvShow,viewModelScope)
-        context.toast("${currentTvShow.name} added succesfully to $current_fragment!")
+
+        viewModelScope.launch {
+            val ifExists=local_repository.isRowExists(currentTvShow.id.toString(),current_fragment,viewModelScope)
+            if(!ifExists) {
+                local_repository.insertTvshowDetailstoDb(currentTvShow, viewModelScope)
+                context.success_toast("${currentTvShow.name} added succesfully to $current_fragment!")
+            }else{
+                context.error_toast("${currentTvShow.name} already exists to $current_fragment!")
+            }
+        }
+
         dialog.dismiss()
     }
 
@@ -116,7 +129,7 @@ class ShowDetailsViewModel(var remoteRepository: RemoteRepository, var context: 
 //Εδώ πρόκειται για μια συνάρτηση η οποία είναι απο το interface ClickCallback και καλείται μόλις ο χρήστης πατήσει μια επιθυμητή σεζόν απο κάποιο show
     override fun seasonClicked(overview: String) {
         if (overview.equals(""))    //Αν δεν παρέχεται απο το API περιγραφή της σεζον δεν χρειάζεται να εμφανίσω το dialog με τις πληροφορίες.Απλά εμφανίζω ένα μήνυμα
-            context.toast("No season overview provided!")
+            context.warning_toast("No season overview provided!")
         else {
             val builder: AlertDialog.Builder = AlertDialog.Builder(context)
             val layoutInflaterAndroid = LayoutInflater.from(context)

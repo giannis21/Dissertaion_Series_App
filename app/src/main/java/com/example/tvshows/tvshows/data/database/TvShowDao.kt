@@ -7,6 +7,8 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.tvshows.data.network.response.details.TvShowDetails
 import com.example.tvshows.data.network.response.nowPlaying.NowPlaying
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Job
 
 @Dao
 interface TvShowDao {
@@ -50,8 +52,8 @@ interface TvShowDao {
     @Query("SELECT * FROM show_details where currentFragment='watchlist'")
     fun getWatchlistShows(): LiveData<MutableList<TvShowDetails>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertToTvShowDetails(show_details: TvShowDetails)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertToTvShowDetails(show_details: TvShowDetails):Long
 
     @Query("SELECT * FROM show_details where id=:id")
     suspend fun getTvShowDetails(id: String): TvShowDetails
@@ -82,4 +84,24 @@ interface TvShowDao {
 
     @Query("UPDATE show_details SET  currentFragment='watchlist' where id=:id")
     suspend fun moveFromFavoritesTowatchlist(id: String)
+
+    //--------------------------seen--------------------------------------//
+    @Query("SELECT * FROM show_details where currentFragment='seen'")
+    fun getSeen(): LiveData<MutableList<TvShowDetails>>
+
+    @Query("select COUNT(id)  from show_details Where currentFragment='seen' ")
+    fun countTvShowsFromSeen(): LiveData<Int>
+
+    @Query("UPDATE show_details SET  currentFragment='seen' where id=:id")
+    suspend fun moveFromSeenToFavorites(id: String)
+
+    @Query("UPDATE show_details SET  currentFragment='watchlist' where id=:id")
+    suspend fun moveFromSeenToWatchlist(id: String)
+
+    @Query("DELETE FROM show_details Where id=:id AND currentFragment='seen'")
+    suspend fun deleteTvShowFromSeen(id: String)
+
+    @Query("SELECT EXISTS(SELECT * FROM show_details WHERE id = :id AND currentFragment=:currentFragment)")
+    suspend fun isRowIsExisted(id : String,currentFragment:String) : Boolean
+
 }

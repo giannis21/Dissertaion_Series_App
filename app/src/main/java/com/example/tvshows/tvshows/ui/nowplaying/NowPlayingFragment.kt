@@ -124,7 +124,7 @@ class NowPlayingFragment : Fragment(), RecyclerViewclick_Callback {
 
         viewModel.countOfNowPLaying.observe(viewLifecycleOwner, Observer {
             if (it == 0 && adapter.itemCount==0)
-                   no_internet_message.visibility = View.VISIBLE
+                no_internet_message.visibility = View.VISIBLE
             else
                 no_internet_message.visibility=View.GONE
         })

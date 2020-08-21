@@ -8,6 +8,7 @@
     <color name="textColorPrimary">#DFD2CA</color>
     <color name="colorPrimaryTransparent">#52403B3B</color>
     <color name="orange">#F0AD4E</color>
+    <color name="chipChecked">#E91E63</color>
     F9DE82
     D2CADF
 </resources>

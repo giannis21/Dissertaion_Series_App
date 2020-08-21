@@ -40,4 +40,5 @@
     <string name="more_info">More info</string>
     <string name="move_to_favorites">Move to favorites</string>
     <string name="move_to_seen">Move to seen</string>
+    <string name="move_to_watchlist">Move to watchlist</string>
 </resources>

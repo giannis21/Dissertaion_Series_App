@@ -67,27 +67,45 @@ class MainActivity : AppCompatActivity(),NavController.OnDestinationChangedListe
             json = input.bufferedReader().use { it.readText() }.toString()
             val jsonObj = JSONObject(json)
             val jsonArray = jsonObj.getJSONArray("genres")
+            var counterOfSelected=0
+            var counterOfClicks=0
             for (i in 0..jsonArray.length() - 1) {
                 val jsonObject = jsonArray.getJSONObject(i)
-                val mChip =
-                    this.layoutInflater.inflate(R.layout.item_chip_category, null, false) as Chip
+                val mChip = this.layoutInflater.inflate(R.layout.item_chip_category, null, false) as Chip
                 mChip.text = jsonObject.getString("name")
                 mChip.tag = jsonObject.getString("id")
-                mChip.chipIcon = (ContextCompat.getDrawable(this, R.drawable.ic_check));
+                mChip.id = jsonObject.getString("id").toInt()
                 mChip.setClickable(true)
                 mChip.setFocusable(true)
                 mChip.setPadding(0, 0, 0, 0)
 
-                mChip.setOnCheckedChangeListener { compoundButton, _ ->
-                    compoundButton.setBackgroundColor(ContextCompat.getColor(this, R.color.white))
-                    Log.i("main11", "${compoundButton.tag}")
-                }
+
+                var flag_changeColor=0
                 mChip.setOnClickListener {
+
                     Toast.makeText(this, "${it.tag}", Toast.LENGTH_SHORT).show()
-                    it.isClickable = true
-                    it.setBackgroundColor(ContextCompat.getColor(this, R.color.bg_chip_state_list))
+
+                    if(flag_changeColor==0 && ++counterOfSelected<=3){
+                     //   counterOfClicks++
+                        mChip.chipIcon = (ContextCompat.getDrawable(this, R.drawable.ic_check))
+                        mChip.isSelected = true
+                        mChip.chipBackgroundColor = getColorStateList(R.color.chipChecked)
+                        flag_changeColor=1
+                    }else  {
+                        mChip.chipIcon = null
+                       // counterOfClicks--
+                        counterOfSelected--
+                        mChip.isSelected =false
+                        mChip.chipBackgroundColor = getColorStateList(R.color.colorPrimary)
+                        flag_changeColor=0
+                    }
+                  //  if(counterOfClicks>3) {
+                        Toast.makeText(this, "mexri 3", Toast.LENGTH_SHORT).show()
+                     //   counterOfClicks--
+                   // }
+
                 }
-                chipsPrograms.addView(mChip)
+                 chipsPrograms.addView(mChip)
             }
 
         } catch (ex: IOException) {
@@ -125,6 +143,9 @@ class MainActivity : AppCompatActivity(),NavController.OnDestinationChangedListe
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.filter -> {
+
+
+
                 if (findNavController(R.id.nav_host_fragment).currentDestination?.id != R.id.showDetailsFragment)
                     if (genresId.iSVisible())
                         genresId.setGone()
@@ -132,8 +153,14 @@ class MainActivity : AppCompatActivity(),NavController.OnDestinationChangedListe
                         genresId.setVisible()
             }
             R.id.search -> {
-                getSupportActionBar()?.setDisplayHomeAsUpEnabled(true)
-                navigateBetweenFragments()
+                var a=chipsPrograms.checkedChipIds
+                for(i in 0 .. chipsPrograms.childCount){
+                    var chip:Chip?=chipsPrograms.getChildAt(i) as Chip?
+                     if(chip?.isSelected==true)
+                       Log.i("aaaa",chip.id.toString())
+                }
+               // getSupportActionBar()?.setDisplayHomeAsUpEnabled(true)
+                //navigateBetweenFragments()
             }
         }
         return super.onOptionsItemSelected(item)

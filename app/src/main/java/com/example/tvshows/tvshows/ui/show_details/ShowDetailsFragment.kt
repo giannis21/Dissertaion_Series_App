@@ -18,8 +18,7 @@ import com.example.tvshows.data.ApiClient
 import com.example.tvshows.data.RemoteRepository
 import com.example.tvshows.data.network.NetworkConnectionIncterceptor
 import com.example.tvshows.databinding.ShowDetailsFragmentBinding
-import com.example.tvshows.utils.Extension_Utils.Companion.toast
-import kotlinx.android.synthetic.main.show_details_fragment.*
+ import kotlinx.android.synthetic.main.show_details_fragment.*
 
 
 class ShowDetailsFragment : Fragment() {
@@ -63,14 +62,13 @@ class ShowDetailsFragment : Fragment() {
 
 
         val args= arguments?.let { ShowDetailsFragmentArgs.fromBundle(it) }
-        viewModel.getTvShowDetails(args?.id.toString(),args?.currentFragment)
-        Log.i("tag",args?.id.toString())
+        viewModel.getTvShowDetails(args?.id.toString(),args?.deriveFrom)
 
     }
 
     private fun addObserver() {
         viewModel.details.observe(viewLifecycleOwner, Observer {
-            context?.toast(it.name)
+          //  context?.toast(it.name)
         })
     }
 

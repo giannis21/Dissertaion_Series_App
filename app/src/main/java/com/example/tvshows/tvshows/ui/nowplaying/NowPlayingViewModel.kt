@@ -11,7 +11,7 @@ import com.example.tvshows.data.local_repository
 import com.example.tvshows.data.netMethods
 import com.example.tvshows.data.network.response.nowPlaying.NowPlaying
 import com.example.tvshows.ui.nowplaying.NowPlayingFragment.Companion.pages_counter
-import com.example.tvshows.utils.Extension_Utils.Companion.toast
+import com.example.tvshows.utils.Extension_Utils.Companion.error_toast
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
@@ -50,7 +50,7 @@ class NowPlayingViewModel(private val remoteRepository: RemoteRepository, var co
                     }
                 }
             } catch (ex: Exception) {
-                context.toast(ex.message.toString())
+                context.error_toast(ex.message.toString())
                 pages_counter--
             }
 
@@ -68,7 +68,7 @@ class NowPlayingViewModel(private val remoteRepository: RemoteRepository, var co
                     local_repository.insertFromAPItoDb(obj, viewModelScope)
 
             } catch (ex: Exception) {
-                context.toast(ex.message.toString())
+                context.error_toast(ex.message.toString())
                 pages_counter--
             }
         }

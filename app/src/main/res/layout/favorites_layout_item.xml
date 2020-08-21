@@ -22,7 +22,7 @@
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/watchlist_layout"
+            android:id="@+id/fav_layout"
             android:layout_width="190dp"
             android:layout_height="wrap_content"
             android:background="@drawable/circled_bordered"
@@ -46,6 +46,7 @@
                     android:layout_width="96dp"
                     android:layout_height="151dp"
                     android:scaleType="fitXY"
+                    android:background="@color/colorPrimary"
                     android:src="@drawable/clapperboard"
                     app:imageWatchlist="@{tvShow.poster_path}" />
 
@@ -152,9 +153,9 @@
             android:padding="7dp"
             android:scaleType="fitXY"
             android:src="@drawable/delete"
-            app:layout_constraintEnd_toEndOf="@+id/watchlist_layout"
+            app:layout_constraintEnd_toEndOf="@+id/fav_layout"
             app:layout_constraintHorizontal_bias="0.36"
-            app:layout_constraintStart_toEndOf="@+id/watchlist_layout"
+            app:layout_constraintStart_toEndOf="@+id/fav_layout"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

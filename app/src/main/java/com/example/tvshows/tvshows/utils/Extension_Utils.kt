@@ -7,6 +7,7 @@ import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.core.widget.NestedScrollView
+import es.dmoral.toasty.Toasty
 
 class Extension_Utils {
     companion object {
@@ -38,9 +39,22 @@ class Extension_Utils {
         fun HorizontalScrollView.iSVisible():Boolean{
             return this.visibility==View.VISIBLE
         }
-        fun Context.toast(message:String){
-            Toast.makeText(applicationContext,message,Toast.LENGTH_SHORT).show()
+        fun Context.success_toast(message:String){
+            Toasty.success(applicationContext, message, Toast.LENGTH_SHORT, true).show()
+         }
+
+        fun Context.error_toast(message:String){
+            Toasty.error(applicationContext, message, Toast.LENGTH_SHORT, true).show()
         }
+
+        fun Context.info_toast(message:String){
+            Toasty.info(applicationContext, message, Toast.LENGTH_SHORT, true).show()
+        }
+
+        fun Context.warning_toast(message:String){
+            Toasty.warning(applicationContext, message, Toast.LENGTH_SHORT, true).show()
+        }
+
 
     }
 }

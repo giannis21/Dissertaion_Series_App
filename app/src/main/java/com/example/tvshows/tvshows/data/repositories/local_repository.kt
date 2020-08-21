@@ -7,10 +7,7 @@ import com.example.tvshows.TvShowDao
 import com.example.tvshows.data.network.response.details.TvShowDetails
 import com.example.tvshows.data.network.response.nowPlaying.NowPlaying
 import com.example.tvshows.tvshows.utils.PreferenceUtils
-import com.example.tvshows.utils.Extension_Utils.Companion.toast
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.util.*
 
 
@@ -53,8 +50,8 @@ class local_repository(private val tvShowDao: TvShowDao) {
     }
 
 
-    fun insertTvshowDetailstoDb(tvShow: TvShowDetails, viewModelScope: CoroutineScope) {
-        viewModelScope.launch(Dispatchers.IO) {
+    fun insertTvshowDetailstoDb(tvShow: TvShowDetails, viewModelScope: CoroutineScope):Job {
+       return viewModelScope.launch(Dispatchers.IO) {
             tvShowDao.insertToTvShowDetails(tvShow)
         }
     }
@@ -92,6 +89,7 @@ class local_repository(private val tvShowDao: TvShowDao) {
     fun getFavorites(): LiveData<MutableList<TvShowDetails>> {
         return tvShowDao.getFavorites()
     }
+
     suspend fun deleteTvShowFromFavorites(id: String) {
         tvShowDao.deleteTvShowFromFavorites(id)
     }
@@ -101,6 +99,43 @@ class local_repository(private val tvShowDao: TvShowDao) {
     }
 
 
+    //-----------Seen methods-------------------//
+    fun getSeen(): LiveData<MutableList<TvShowDetails>> {
+        return tvShowDao.getSeen()
+    }
+
+
+    fun countTvShowsFromSeen(): LiveData<Int> {
+        return tvShowDao.countTvShowsFromSeen()
+    }
+
+    suspend fun moveFromSeenToFavorites(id: String) {
+        tvShowDao.moveFromSeenToFavorites(id)
+    }
+
+    suspend fun moveFromSeenToWatchlist(id: String) {
+        tvShowDao.moveFromSeenToWatchlist(id)
+    }
+
+    suspend fun deleteTvShowFromSeen(id: String) {
+        tvShowDao.deleteTvShowFromSeen(id)
+    }
+
+    //------------------------DEtails----------------------------------//
+//    fun isRowExists(id: String, currentFragment: String, viewModelScope: CoroutineScope)= GlobalScope.launch {
+//        async { tvShowDao.isRowIsExisted(id, currentFragment)}.await()
+//
+//    }
+
+    suspend fun  isRowExists(id: String, currentFragment: String, viewModelScope: CoroutineScope): Boolean {
+
+        return  tvShowDao.isRowIsExisted(id, currentFragment)
+
+    }
+
+
+
+
     fun fetchNeeded(context: Context): Boolean {
 
         val calendar = Calendar.getInstance()
@@ -108,7 +143,7 @@ class local_repository(private val tvShowDao: TvShowDao) {
         val minutes = timeInMilli / (60 * 1000)
         val lastTime = PreferenceUtils.getLastTime(context).toInt()
 
-        if (minutes - lastTime > 60 * 3) {
+        if (minutes - lastTime > 0) {
             PreferenceUtils.setLastTime(minutes.toString(), context)
             return true
         }

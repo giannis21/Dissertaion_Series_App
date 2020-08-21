@@ -16,9 +16,7 @@
 
         <item android:id="@+id/Top_Rated"
             android:title="@string/top_rated"
-            android:icon="@drawable/top"
-
-            />
+            android:icon="@drawable/top"/>
 
 
 
