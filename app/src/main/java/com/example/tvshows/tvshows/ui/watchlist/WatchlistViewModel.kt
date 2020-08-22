@@ -29,13 +29,11 @@ class WatchlistViewModel(remoteRepository: RemoteRepository,var context: Context
         }
     }
 
-
     fun moveFromwatchlistToFavorites(id:Int){
         viewModelScope.launch {
             local_repository.moveFromwatchlistToFavorites(id.toString())
         }
     }
-
 
     fun moveFromwatchlistToSeen(id:Int){
         viewModelScope.launch {

@@ -16,9 +16,7 @@ import retrofit2.http.Query
 interface ApiClient {
 
     @GET("genre/tv/list")
-   suspend fun getGenres(): Genres
-   // https://developers.themoviedb.org/3/tv/get-tv-airing-today
-   // https://api.themoviedb.org/3/tv/airing_today?api_key=e7f37ba18b2263f1980dfdd25171d0c2&language=en-US&page=1
+    suspend fun getGenres(): Genres
 
     @GET("tv/airing_today")
     suspend fun getPlayingNow(@Query("language") lang: String ="en-US", @Query("page") page:String): NowPlaying

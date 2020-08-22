@@ -21,6 +21,7 @@ import com.example.tvshows.data.network.response.details.TvShowDetails
 import com.example.tvshows.tvshows.ui.adapters.tvShowGridItemDecoration
 import com.example.tvshows.tvshows.ui.callbacks.ClickCallback
 import com.example.tvshows.tvshows.ui.adapters.watchlistRecyclerViewAdapter
+import com.example.tvshows.tvshows.ui.watchlist.popUpMenu_watchlist.showPopUpMenu
 import com.example.tvshows.ui.mostpopular.watchListViewModelFactory
 import com.example.tvshows.utils.Extension_Utils.Companion.error_toast
 import com.example.tvshows.utils.Extension_Utils.Companion.success_toast
@@ -56,19 +57,9 @@ class WatchlistFragment : Fragment(),
             }
         }
         recycler_view.layoutManager = gridLayoutManager
-        adapter =
-            watchlistRecyclerViewAdapter(
-                this.requireContext(),
-                list,
-                this
-            )
+        adapter = watchlistRecyclerViewAdapter(this.requireContext(), list, this)
         recycler_view.adapter = adapter
-        recycler_view.addItemDecoration(
-            tvShowGridItemDecoration(
-                15,
-                19
-            )
-        )
+        recycler_view.addItemDecoration(tvShowGridItemDecoration(15, 19))
 
         viewModel.details.observe(viewLifecycleOwner, Observer {
             adapter.submitList(it, "")
@@ -84,30 +75,7 @@ class WatchlistFragment : Fragment(),
 
 
     override fun onClick(menuItemView1: View, id: Int) {
-        val ctw :Context= ContextThemeWrapper(context, R.style.popupTheme)
-        val popup = PopupMenu(ctw, menuItemView1)
-
-        popup.inflate(R.menu.popup_menu)
-        popup.show()
-
-        popup.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.move_to_seen_menu -> {
-                    viewModel.moveFromwatchlistToSeen(id)
-                    true
-                }
-                R.id.move_to_favorites_menu -> {
-                    viewModel.moveFromwatchlistToFavorites(id)
-                    true
-                }
-                R.id.more_info_menu -> {
-                    val action = WatchlistFragmentDirections.actionWatchlistToShowDetailsFragment(id, "watchList")
-                    findNavController().navigate(action)
-                    true
-                }
-                else -> false
-            }
-        }
+        showPopUpMenu(context,menuItemView1,id,viewModel)
     }
 
     override fun onDeleteIconClick(id: Int, name: String) {

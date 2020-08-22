@@ -36,7 +36,7 @@ class NowPlayingViewModel(private val remoteRepository: RemoteRepository, var co
             try {
 
                 //καθαρίζω τον πίνακα now_playing της βάσης δεδομένων μόνο αν έχει περάσει 1 ώρα && βρίσκομαι στην 1η σελίδα && είμαι ενεργός στο ίντερνετ
-                if (pages_counter == 1 && netMethods.hasInternet(context, 0) && local_repository.fetchNeeded(context))
+                //if (pages_counter == 1 && netMethods.hasInternet(context, 0) && local_repository.fetchNeeded(context))
                     local_repository.deleteAllFromNowPlaying(viewModelScope)
 
                 val result = async { local_repository.get_now_playing_per_page(page) }.await()

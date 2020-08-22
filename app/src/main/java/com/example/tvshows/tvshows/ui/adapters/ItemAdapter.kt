@@ -40,4 +40,9 @@ class ItemAdapter(var context: Context, var list: MutableList<Result_NowPlaying>
             }
         }
     }
+    fun clear(){
+        list.clear()
+        notifyDataSetChanged()
+    }
+
 }

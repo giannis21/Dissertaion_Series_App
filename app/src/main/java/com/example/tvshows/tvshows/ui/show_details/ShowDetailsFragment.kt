@@ -48,18 +48,6 @@ class ShowDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         linear.animation=AnimationUtils.loadAnimation(context,R.anim.fade_transition_animation)
-//        val fadeIn=AnimationUtils.loadAnimation(context,R.anim.fade_transition_animation)
-//
-//
-//        val s = AnimationSet(true)
-//        s.interpolator = AccelerateInterpolator()
-//
-//        s.addAnimation(slidebottom)
-//        s.addAnimation(fadeIn)
-//        linear.startAnimation(s)
-
-
-
 
         val args= arguments?.let { ShowDetailsFragmentArgs.fromBundle(it) }
         viewModel.getTvShowDetails(args?.id.toString(),args?.deriveFrom)
@@ -68,7 +56,6 @@ class ShowDetailsFragment : Fragment() {
 
     private fun addObserver() {
         viewModel.details.observe(viewLifecycleOwner, Observer {
-          //  context?.toast(it.name)
         })
     }
 

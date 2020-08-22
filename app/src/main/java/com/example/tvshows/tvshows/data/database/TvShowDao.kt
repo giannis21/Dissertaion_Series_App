@@ -92,7 +92,7 @@ interface TvShowDao {
     @Query("select COUNT(id)  from show_details Where currentFragment='seen' ")
     fun countTvShowsFromSeen(): LiveData<Int>
 
-    @Query("UPDATE show_details SET  currentFragment='seen' where id=:id")
+    @Query("UPDATE show_details SET  currentFragment='favorites' where id=:id")
     suspend fun moveFromSeenToFavorites(id: String)
 
     @Query("UPDATE show_details SET  currentFragment='watchlist' where id=:id")

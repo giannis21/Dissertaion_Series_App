@@ -14,11 +14,7 @@ import kotlinx.android.synthetic.main.favorites_layout_item.view.*
 import kotlinx.android.synthetic.main.watchlist_layout_item.view.*
 import kotlinx.android.synthetic.main.watchlist_layout_item.view.delete_icon
 
-class watchlistRecyclerViewAdapter(
-    var context: Context,
-    private val list: MutableList<TvShowDetails>,
-    private var listener: ClickCallback
-) : RecyclerView.Adapter<watchlistRecyclerViewAdapter.WatchlistCardViewHolder>() {
+class watchlistRecyclerViewAdapter(var context: Context, private val list: MutableList<TvShowDetails>, private var listener: ClickCallback) : RecyclerView.Adapter<watchlistRecyclerViewAdapter.WatchlistCardViewHolder>() {
 
     private val WATCHLIST_TYPE = 1
     private val FAVORITES_TYPE = 2
@@ -45,32 +41,16 @@ class watchlistRecyclerViewAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WatchlistCardViewHolder {
-        val binding = DataBindingUtil.inflate<WatchlistLayoutItemBinding>(
-            LayoutInflater.from(parent.context),
-            R.layout.watchlist_layout_item,
-            parent,
-            false
-        )
+        val binding = DataBindingUtil.inflate<WatchlistLayoutItemBinding>(LayoutInflater.from(parent.context), R.layout.watchlist_layout_item, parent, false)
 
         if (viewType == WATCHLIST_TYPE) {
-            return WatchlistCardViewHolder(
-                binding
-            )
+            return WatchlistCardViewHolder(binding)
         } else if (viewType == FAVORITES_TYPE) {
-            val binding1 = DataBindingUtil.inflate<FavoritesLayoutItemBinding>(
-                LayoutInflater.from(parent.context),
-                R.layout.favorites_layout_item,
-                parent,
-                false
-            )
-            return WatchlistCardViewHolder(
-                binding1
-            )
+            val binding1 = DataBindingUtil.inflate<FavoritesLayoutItemBinding>(LayoutInflater.from(parent.context), R.layout.favorites_layout_item, parent, false)
+            return WatchlistCardViewHolder(binding1)
         }
 
-        return WatchlistCardViewHolder(
-            binding
-        )
+        return WatchlistCardViewHolder(binding)
 
     }
 

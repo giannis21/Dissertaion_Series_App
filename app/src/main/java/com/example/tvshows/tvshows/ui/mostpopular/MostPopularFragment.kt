@@ -57,7 +57,7 @@ class MostPopularFragment : Fragment(), RecyclerViewclick_Callback {
 
 
         viewModel = ViewModelProvider(this, viewModelFactory).get(MostPopularViewModel::class.java)
-         viewModel.getMostPopularPerPage(1)
+        viewModel.getMostPopularPerPage(1)
         pages_counterP = 1
 
         viewModel.popular.observe(viewLifecycleOwner, Observer {
@@ -76,8 +76,7 @@ class MostPopularFragment : Fragment(), RecyclerViewclick_Callback {
 
          internet_retry.setOnClickListener {
              viewModel.getMostPopularPerPage(1)
-
-        }
+         }
         recyclerview_popular.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)

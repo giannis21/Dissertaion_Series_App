@@ -18,18 +18,24 @@ import com.example.tvshows.RecyclerViewclick_Callback
 import com.example.tvshows.data.ApiClient
 import com.example.tvshows.data.RemoteRepository
 import com.example.tvshows.data.network.NetworkConnectionIncterceptor
+import com.example.tvshows.data.network.response.nowPlaying.NowPlaying
 import com.example.tvshows.data.network.response.nowPlaying.Result_NowPlaying
+import com.example.tvshows.tvshows.ui.callbacks.GenresClickCallback
+import com.example.tvshows.ui.seen.MainViewModel.Companion.listener_genres_clicked
+import com.example.tvshows.ui.seen.MainViewModel.Companion.selected_genres
 import com.example.tvshows.utils.Extension_Utils.Companion.setGone
 import com.example.tvshows.utils.Extension_Utils.Companion.setVisible
+import com.example.tvshows.utils.Extension_Utils.Companion.success_toast
 import kotlinx.android.synthetic.main.connectivity_layout.*
 import kotlinx.android.synthetic.main.now_playing_fragment.*
 import kotlinx.android.synthetic.main.now_playing_fragment.no_internet_message
 
 
-class NowPlayingFragment : Fragment(), RecyclerViewclick_Callback {
+class NowPlayingFragment : Fragment(), RecyclerViewclick_Callback,GenresClickCallback{
 
     companion object {
         var pages_counter = 1
+        var list_allGenres= mutableListOf<Result_NowPlaying>()
     }
 
     private lateinit var viewModelFactory: NowPlayingViewModelFactory
@@ -57,7 +63,7 @@ class NowPlayingFragment : Fragment(), RecyclerViewclick_Callback {
         super.onActivityCreated(savedInstanceState)
         pages_counter = 1
         val list: MutableList<Result_NowPlaying> = mutableListOf()
-
+        listener_genres_clicked=this
 
         //-------Recyclerview--------//
         manager = LinearLayoutManager(this.context)
@@ -118,7 +124,8 @@ class NowPlayingFragment : Fragment(), RecyclerViewclick_Callback {
 
         viewModel.playingNowDb_.observe(viewLifecycleOwner, Observer {
             it?.let {
-                adapter.submitList(it.resultNowPlayings, "nowPlayingFragment")
+                submitListToAdapter(it)
+                list_allGenres.addAll(it.resultNowPlayings)
             }
         })
 
@@ -130,6 +137,38 @@ class NowPlayingFragment : Fragment(), RecyclerViewclick_Callback {
         })
     }
 
+    private fun submitListToAdapter(it: NowPlaying) {
+        if (selected_genres.isEmpty())
+            adapter.submitList(it.resultNowPlayings, "nowPlayingFragment")
+        else {
+            val filtered_list = filterList()
+            if(filtered_list.isEmpty())
+                viewModel.get_now_playing_per_page(++pages_counter)
+            else {
+                val filteredList = filterList()
+                if (!filteredList.isEmpty())
+                    adapter.submitList(filteredList, "nowPlayingFragment")
+            }
+        }
+    }
+
+
+    private fun filterList():MutableList<Result_NowPlaying> {
+        val tempList_filtered= mutableListOf<Result_NowPlaying>()
+        tempList_filtered.clear()
+        for(i in 0..list_allGenres.size-1){
+
+           list_allGenres[i].genre_ids.forEach{
+              for (selectedGenre in selected_genres) {
+                   if(selectedGenre.id == it) {
+                       tempList_filtered.add(list_allGenres[i])
+                       break
+                  }
+               }
+           }
+       }
+       return tempList_filtered
+    }
 
 
     override fun onStart() {
@@ -138,12 +177,26 @@ class NowPlayingFragment : Fragment(), RecyclerViewclick_Callback {
         manager.scrollToPositionWithOffset(0, 0)
     }
 
+
+    override fun genreClicked() {
+         context?.success_toast("${selected_genres.size}")
+         if (selected_genres.isEmpty())
+             adapter.submitList(list_allGenres,"nowPlayingFragment")
+         else {
+              val filteredList=filterList()
+              if(!filteredList.isEmpty()){
+                  adapter.clear()
+                  adapter.submitList(filteredList,"nowPlayingFragment")
+              }else {
+                  adapter.clear()
+              }
+         }
+    }
+
+
     override fun OnTvShowClick(id: Int) {
         val action = NowPlayingFragmentDirections.actionNowPlayingToShowDetailsFragment(id,"nowPlaying")
         findNavController().navigate(action)
     }
-
-
-
 }
 

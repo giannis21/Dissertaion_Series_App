@@ -143,6 +143,9 @@
         <argument
             android:name="deriveFrom"
             app:argType="string" />
+        <action
+            android:id="@+id/action_showDetailsFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
 
     </fragment>
 </navigation>

@@ -1,17 +1,12 @@
 package com.example.tvshows.ui.seen
 
-import android.content.Context
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.PopupMenu
-import androidx.appcompat.view.ContextThemeWrapper
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tvshows.R
@@ -22,6 +17,7 @@ import com.example.tvshows.data.network.response.details.TvShowDetails
 import com.example.tvshows.tvshows.ui.adapters.tvShowGridItemDecoration
 import com.example.tvshows.tvshows.ui.adapters.watchlistRecyclerViewAdapter
 import com.example.tvshows.tvshows.ui.callbacks.ClickCallback
+import com.example.tvshows.tvshows.ui.seen.popUpMenu_topRated.showPopUpMenu_seen
 
 import com.example.tvshows.ui.mostpopular.seenViewModelFactory
 import com.example.tvshows.utils.Extension_Utils.Companion.success_toast
@@ -72,30 +68,8 @@ class SeenFragment : Fragment(), ClickCallback {
     }
 
     override fun onClick(menuItemView1: View, id: Int) {
-        val ctw : Context = ContextThemeWrapper(context, R.style.popupTheme)
-        val popup = PopupMenu(ctw, menuItemView1)
+        showPopUpMenu_seen(context, menuItemView1, id, viewModel)
 
-        popup.inflate(R.menu.popup_menu_seen)
-        popup.show()
-
-        popup.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.move_to_watchlist_menu_seen -> {
-                    viewModel.moveFromSeenToWatchlist(id)
-                    true
-                }
-                R.id.move_to_favorites_menu_seen -> {
-                    viewModel.moveFromSeenToFavorites(id)
-                    true
-                }
-                R.id.more_info_menu_seen -> {
-                    val action = SeenFragmentDirections.actionSeenToShowDetailsFragment(id, "seen")
-                    findNavController().navigate(action)
-                    true
-                }
-                else -> false
-            }
-        }
     }
 
     override fun onDeleteIconClick(id: Int, name: String) {

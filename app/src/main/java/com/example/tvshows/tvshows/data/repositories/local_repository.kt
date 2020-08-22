@@ -122,15 +122,9 @@ class local_repository(private val tvShowDao: TvShowDao) {
     }
 
     //------------------------DEtails----------------------------------//
-//    fun isRowExists(id: String, currentFragment: String, viewModelScope: CoroutineScope)= GlobalScope.launch {
-//        async { tvShowDao.isRowIsExisted(id, currentFragment)}.await()
-//
-//    }
 
-    suspend fun  isRowExists(id: String, currentFragment: String, viewModelScope: CoroutineScope): Boolean {
-
+    suspend fun  rowExists(id: String, currentFragment: String, viewModelScope: CoroutineScope): Boolean {
         return  tvShowDao.isRowIsExisted(id, currentFragment)
-
     }
 
 

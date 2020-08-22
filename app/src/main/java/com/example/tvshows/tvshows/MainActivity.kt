@@ -1,119 +1,53 @@
 package com.example.tvshows
 
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.animation.AccelerateDecelerateInterpolator
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import androidx.navigation.ui.*
+import com.example.tvshows.ui.mostpopular.MainModelFactory
+import com.example.tvshows.ui.seen.MainViewModel
+import com.example.tvshows.ui.seen.MainViewModel.Companion.selected_genres
+import com.example.tvshows.utils.Extension_Utils.Companion.error_toast
 import com.example.tvshows.utils.Extension_Utils.Companion.iSVisible
 import com.example.tvshows.utils.Extension_Utils.Companion.setGone
 import com.example.tvshows.utils.Extension_Utils.Companion.setVisible
-import com.google.android.material.chip.Chip
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
-import org.json.JSONObject
-
-import java.io.IOException
-import java.io.InputStream
 
 
 class MainActivity : AppCompatActivity(),NavController.OnDestinationChangedListener {
     private lateinit var appBarConfig: AppBarConfiguration
-
+    private lateinit var viewModelFactory: MainModelFactory
+    private lateinit var viewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setUpToolbar()
+        viewModelFactory = MainModelFactory(this)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
 
         appBarConfig = AppBarConfiguration(
-            setOf(
-                R.id.now_playing,
-                R.id.Popular,
-                R.id.Top_Rated,
-                R.id.watchlist,
-                R.id.favorites,
-                R.id.seen,
-                R.id.settings,
-                R.id.searchFragment
-            ), drawer_layout
-        )
-
+            setOf(R.id.now_playing, R.id.Popular, R.id.Top_Rated, R.id.watchlist, R.id.favorites, R.id.seen, R.id.settings, R.id.searchFragment), drawer_layout)
 
         val navController = Navigation.findNavController(this, R.id.nav_host_fragment)
         setupActionBarWithNavController(navController, appBarConfig)
         nav_view.setupWithNavController(navController)
-        loadJSONFromAsset()
+        viewModel.loadJSONFromAsset(chipsPrograms)
     }
 
 
 
-    @SuppressLint("InflateParams")
-    fun loadJSONFromAsset(): String? {
-        val json: String
-        try {
-            val input: InputStream = assets.open("Genres")
-            json = input.bufferedReader().use { it.readText() }.toString()
-            val jsonObj = JSONObject(json)
-            val jsonArray = jsonObj.getJSONArray("genres")
-            var counterOfSelected=0
-            var counterOfClicks=0
-            for (i in 0..jsonArray.length() - 1) {
-                val jsonObject = jsonArray.getJSONObject(i)
-                val mChip = this.layoutInflater.inflate(R.layout.item_chip_category, null, false) as Chip
-                mChip.text = jsonObject.getString("name")
-                mChip.tag = jsonObject.getString("id")
-                mChip.id = jsonObject.getString("id").toInt()
-                mChip.setClickable(true)
-                mChip.setFocusable(true)
-                mChip.setPadding(0, 0, 0, 0)
 
-
-                var flag_changeColor=0
-                mChip.setOnClickListener {
-
-                    Toast.makeText(this, "${it.tag}", Toast.LENGTH_SHORT).show()
-
-                    if(flag_changeColor==0 && ++counterOfSelected<=3){
-                     //   counterOfClicks++
-                        mChip.chipIcon = (ContextCompat.getDrawable(this, R.drawable.ic_check))
-                        mChip.isSelected = true
-                        mChip.chipBackgroundColor = getColorStateList(R.color.chipChecked)
-                        flag_changeColor=1
-                    }else  {
-                        mChip.chipIcon = null
-                       // counterOfClicks--
-                        counterOfSelected--
-                        mChip.isSelected =false
-                        mChip.chipBackgroundColor = getColorStateList(R.color.colorPrimary)
-                        flag_changeColor=0
-                    }
-                  //  if(counterOfClicks>3) {
-                        Toast.makeText(this, "mexri 3", Toast.LENGTH_SHORT).show()
-                     //   counterOfClicks--
-                   // }
-
-                }
-                 chipsPrograms.addView(mChip)
-            }
-
-        } catch (ex: IOException) {
-            ex.printStackTrace()
-            return null
-        }
-        return json
-    }
 
     override fun onSupportNavigateUp(): Boolean {
         return findNavController(R.id.nav_host_fragment).navigateUp(appBarConfig)
@@ -131,8 +65,6 @@ class MainActivity : AppCompatActivity(),NavController.OnDestinationChangedListe
         getSupportActionBar()?.setHomeButtonEnabled(false)
         toolbar_main.setTitleTextColor(ContextCompat.getColor(this, R.color.white))
         toolbar_main.inflateMenu(R.menu.main_menu)
-
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -143,9 +75,6 @@ class MainActivity : AppCompatActivity(),NavController.OnDestinationChangedListe
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.filter -> {
-
-
-
                 if (findNavController(R.id.nav_host_fragment).currentDestination?.id != R.id.showDetailsFragment)
                     if (genresId.iSVisible())
                         genresId.setGone()
@@ -153,14 +82,8 @@ class MainActivity : AppCompatActivity(),NavController.OnDestinationChangedListe
                         genresId.setVisible()
             }
             R.id.search -> {
-                var a=chipsPrograms.checkedChipIds
-                for(i in 0 .. chipsPrograms.childCount){
-                    var chip:Chip?=chipsPrograms.getChildAt(i) as Chip?
-                     if(chip?.isSelected==true)
-                       Log.i("aaaa",chip.id.toString())
-                }
-               // getSupportActionBar()?.setDisplayHomeAsUpEnabled(true)
-                //navigateBetweenFragments()
+                 getSupportActionBar()?.setDisplayHomeAsUpEnabled(true)
+                 navigateBetweenFragments()
             }
         }
         return super.onOptionsItemSelected(item)
@@ -181,6 +104,8 @@ class MainActivity : AppCompatActivity(),NavController.OnDestinationChangedListe
             findNavController(R.id.nav_host_fragment).navigate(R.id.action_favorites_to_searchFragment)
         } else if (findNavController(R.id.nav_host_fragment).currentDestination?.id == R.id.settings) {
             findNavController(R.id.nav_host_fragment).navigate(R.id.action_favorites_to_searchFragment)
+        } else if (findNavController(R.id.nav_host_fragment).currentDestination?.id == R.id.showDetailsFragment) {
+            findNavController(R.id.nav_host_fragment).navigate(R.id.action_showDetailsFragment_to_searchFragment)
         }
     }
 
@@ -190,7 +115,7 @@ class MainActivity : AppCompatActivity(),NavController.OnDestinationChangedListe
         arguments: Bundle?
     ) {
         if (destination.id == R.id.showDetailsFragment)
-            genresId.setGone()
+         applicationContext.error_toast("eeeee")
     }
 
 }
