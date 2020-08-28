@@ -59,7 +59,7 @@ class watchlistRecyclerViewAdapter(var context: Context, private val list: Mutab
 
             holder.watchlist_Binding?.tvShow = list[position]
             holder.itemView.watchlist_layout.setOnClickListener {
-                listener.onClick(it, list[position].id)
+                listener.onClick(it, list[position])
             }
             holder.itemView.delete_icon.setOnClickListener {
                 listener.onDeleteIconClick(list[position].id, list[position].name)
@@ -69,7 +69,7 @@ class watchlistRecyclerViewAdapter(var context: Context, private val list: Mutab
 
             holder.favorites_Binding?.tvShow = list[position]
             holder.itemView.fav_layout.setOnClickListener {
-                listener.onClick(it, list[position].id)
+                listener.onClick(it, list[position])
             }
             holder.itemView.delete_icon.setOnClickListener {
                 listener.onDeleteIconClick(list[position].id, list[position].name)

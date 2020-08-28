@@ -3,6 +3,7 @@ package com.example.tvshows.ui.show_details
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.widget.ScrollView
 import android.widget.TextView
@@ -19,14 +20,20 @@ import com.example.tvshows.data.RemoteRepository
 import com.example.tvshows.data.local_repository
 import com.example.tvshows.data.network.response.details.TvShowDetails
 import com.example.tvshows.tvshows.ui.show_details.ClickCallback
-import com.example.tvshows.tvshows.ui.show_details.Season_dialog.displaySeasonDialog
+import com.example.tvshows.tvshows.ui.show_details.Details_dialogs
+import com.example.tvshows.tvshows.ui.show_details.Details_dialogs.Companion.displayRatingDialog
+import com.example.tvshows.tvshows.ui.show_details.Details_dialogs.Companion.displaySeasonDialog
+import com.example.tvshows.tvshows.utils.PreferenceUtils.Companion.getguest_session
+import com.example.tvshows.tvshows.utils.PreferenceUtils.Companion.setguest_session
 import com.example.tvshows.utils.Extension_Utils.Companion.error_toast
 import com.example.tvshows.utils.Extension_Utils.Companion.setGone
 import com.example.tvshows.utils.Extension_Utils.Companion.setVisible
 import com.example.tvshows.utils.Extension_Utils.Companion.success_toast
 import com.example.tvshows.utils.Extension_Utils.Companion.warning_toast
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.layout_bottom_sheet.view.*
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 
@@ -45,6 +52,8 @@ class ShowDetailsViewModel(var remoteRepository: RemoteRepository, var context: 
     }
 
     fun getTvShowDetails(id: String, currentFragment: String?) {
+        val det=Details_dialogs(context)
+        det.displayLoadingDialog(context)
         viewModelScope.launch {
             try {
                 if(currentFragment.equals("watchList") || currentFragment.equals("favorites") || currentFragment.equals("seen")){
@@ -53,13 +62,16 @@ class ShowDetailsViewModel(var remoteRepository: RemoteRepository, var context: 
                     currentTvShow = remoteRepository.getTvShowDetails(id)
                 }
                 details_.value = currentTvShow
+                det.hideLoadingDialog()
             } catch (ex: Exception) {
                 context.error_toast(ex.message.toString())
             }
         }
     }
 
-
+    fun displayRating_dialog() {
+        displayRatingDialog(context,this)
+    }
     // καλείται απο το xml αρχείο και ανοίγει στο browser την ιστοσελίδα της τρέχουσας σειράς
     fun addUrl(url: String) {
         val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
@@ -121,5 +133,26 @@ class ShowDetailsViewModel(var remoteRepository: RemoteRepository, var context: 
         else {
             displaySeasonDialog(context,overview)
         }
+    }
+
+    fun rateTvshow(rate: String) {
+
+        val jsonObj=JsonObject()
+        jsonObj.addProperty("value",rate)
+
+            viewModelScope.launch {
+                try {
+                if (getguest_session(context).equals("")) {
+                    val user_session = async { remoteRepository.getguest_session() }.await()
+                    setguest_session(user_session.guest_session_id, context)
+                }
+
+                val response = remoteRepository.rateTvShow(rate, getguest_session(context), jsonObj)
+                context.success_toast(response.toString())
+                }catch (e : Exception){
+                    context.error_toast(e.message.toString())
+                }
+            }
+
     }
 }

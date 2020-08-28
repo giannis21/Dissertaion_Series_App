@@ -8,9 +8,11 @@ import com.example.tvshows.TvShowRoomDatabase
 import com.example.tvshows.data.RemoteRepository
 import com.example.tvshows.data.local_repository
 import com.example.tvshows.data.network.response.details.TvShowDetails
+import com.example.tvshows.utils.Extension_Utils.Companion.warning_toast
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-class FavoritesViewModel(remoteRepository: RemoteRepository, context: Context) : ViewModel() {
+class FavoritesViewModel(remoteRepository: RemoteRepository, var context: Context) : ViewModel() {
 
     val details: LiveData<MutableList<TvShowDetails>>
     private var local_repository: local_repository
@@ -29,17 +31,35 @@ class FavoritesViewModel(remoteRepository: RemoteRepository, context: Context) :
         }
     }
 
+    suspend fun rowExists(id: String, current_fragment: String): Boolean {
+        return local_repository.rowExists(id, current_fragment, viewModelScope)
+    }
 
-    fun moveFromFavoritesTowatchlist(id:Int){
+    fun moveTowatchlist(obj: TvShowDetails){
         viewModelScope.launch {
-            local_repository.moveFromFavoritesTowatchlist(id.toString())
+            val exists = rowExists(obj.id.toString(), "watchlist")
+            if (!exists) {
+
+                async {local_repository.deleteTvShowFromFavorites(obj.id.toString())}.await()
+                obj.currentFragment="watchlist"
+                local_repository.insertTvshowDetailstoDb(obj,viewModelScope)
+            } else {
+                context.warning_toast("It already exists in watchlist!")
+            }
         }
     }
 
 
-    fun moveFromwatchlistToSeen(id:Int){
+    fun moveToSeen(obj: TvShowDetails){
         viewModelScope.launch {
-            local_repository.moveFromwatchlistToSeen(id.toString())
+            val exists = rowExists(obj.id.toString(), "seen")
+            if (!exists) {
+                async {local_repository.deleteTvShowFromFavorites(obj.id.toString())}.await()
+                obj.currentFragment="seen"
+                local_repository.insertTvshowDetailstoDb(obj,viewModelScope)
+            } else {
+                context.warning_toast("It already exists in seen!")
+            }
         }
     }
 

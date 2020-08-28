@@ -12,11 +12,11 @@ object netMethods {
 
     var listener: InternetCallback? = null
 
-    fun hasInternet(applicationContext: Context, flag:Int): Boolean {
+    fun hasInternet(applicationContext: Context, return_boolean_state:Boolean): Boolean {
         if (Build.VERSION.SDK_INT >= 23) {
             if (!isInternetAvailable1(applicationContext)) {
                 listener?.hasInternet(false)
-                if(flag==1)
+                if(return_boolean_state==false)
                     throw NoInternetException("No internet connection")
                 else
                     return false
@@ -27,7 +27,7 @@ object netMethods {
         } else {
             if (!isInternetAvailable(applicationContext)) {
                 listener?.hasInternet(false)
-                if(flag==1)
+                if(return_boolean_state==false)
                     throw NoInternetException("No internet connection")
                 else
                     return false

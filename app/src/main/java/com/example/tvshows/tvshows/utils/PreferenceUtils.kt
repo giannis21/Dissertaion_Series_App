@@ -1,6 +1,7 @@
 package com.example.tvshows.tvshows.utils
 
 import android.content.Context
+import com.example.tvshows.tvshows.data.network.response.Guest_Session
 
 
 class PreferenceUtils {
@@ -19,6 +20,16 @@ class PreferenceUtils {
             editor.apply()
         }
 
+        private const val SESSION_ID = "com.frag.guest_session"
+        fun getguest_session(context: Context):String{
+            val preferences = androidx.preference.PreferenceManager.getDefaultSharedPreferences(context)
+            return preferences.getString(SESSION_ID, "")!!
+        }
 
+        fun setguest_session(guestSession:String, context: Context) {
+            val editor = androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).edit()
+            editor.putString(SESSION_ID, guestSession)
+            editor.apply()
+        }
     }
 }

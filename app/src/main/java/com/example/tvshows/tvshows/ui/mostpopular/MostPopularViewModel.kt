@@ -18,7 +18,8 @@ class MostPopularViewModel(var remoteRepository: RemoteRepository, var context: 
 
     var popular = MutableLiveData<NowPlaying>()
     private var local_repository: local_repository
-     var countOfNowPLaying: LiveData<Int>
+    var countOfNowPLaying: LiveData<Int>
+    var total_pages = 2
     init {
         val TvshowsDao = TvShowRoomDatabase.getDatabase(context).tvShowDao()
         local_repository = local_repository(TvshowsDao)
@@ -35,9 +36,10 @@ class MostPopularViewModel(var remoteRepository: RemoteRepository, var context: 
                 if (result == null)
                     fetchMostPopularFromApi(page)
                 else {
-                    if (page <= result.resultNowPlayings.size) {
+                    if (page <= total_pages) {
                         result.currentFragment = "mostPopular"
                         popular.value = result
+                        total_pages=result.total_pages
                     }
                 }
             } catch (ex: Exception) {
@@ -54,9 +56,10 @@ class MostPopularViewModel(var remoteRepository: RemoteRepository, var context: 
                 obj.currentFragment = "mostPopular"
                 popular.value = obj
 
-                if (page <= obj.resultNowPlayings.size)
+                if (page <= total_pages) {
                     local_repository.insertFromAPItoDb(obj, viewModelScope)
-
+                    total_pages=obj.total_pages
+                }
             } catch (ex: Exception) {
                 context.error_toast(ex.message.toString())
                 pages_counterP--

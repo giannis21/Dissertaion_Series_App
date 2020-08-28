@@ -37,7 +37,7 @@
      android:layout_centerInParent="true"
      android:layout_marginStart="20dp"
      android:layout_toEndOf="@+id/pr"
-     android:text="Loading..."
+     android:text="@string/loading"
      android:textColor="@color/textColorPrimary"
      android:textSize="20sp" />
 

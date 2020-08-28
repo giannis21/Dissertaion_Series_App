@@ -17,16 +17,27 @@ import com.example.tvshows.R
 import com.example.tvshows.RecyclerViewclick_Callback
 import com.example.tvshows.data.ApiClient
 import com.example.tvshows.data.RemoteRepository
+import com.example.tvshows.data.netMethods
 import com.example.tvshows.data.network.NetworkConnectionIncterceptor
+import com.example.tvshows.data.network.response.nowPlaying.NowPlaying
 import com.example.tvshows.data.network.response.nowPlaying.Result_NowPlaying
+import com.example.tvshows.tvshows.SharedMethods
+import com.example.tvshows.tvshows.ui.callbacks.GenresClickCallback
+import com.example.tvshows.ui.nowplaying.NowPlayingFragment
+import com.example.tvshows.ui.nowplaying.NowPlayingFragmentDirections
+import com.example.tvshows.ui.seen.MainViewModel
+import com.example.tvshows.ui.seen.MainViewModel.Companion.listener_genres_clicked
+import com.example.tvshows.utils.Extension_Utils.Companion.error_toast
 import com.example.tvshows.utils.Extension_Utils.Companion.setGone
 import com.example.tvshows.utils.Extension_Utils.Companion.setVisible
+import com.example.tvshows.utils.Extension_Utils.Companion.success_toast
 import kotlinx.android.synthetic.main.connectivity_layout.*
 import kotlinx.android.synthetic.main.most_popular_fragment.*
 
-class MostPopularFragment : Fragment(), RecyclerViewclick_Callback {
+class MostPopularFragment : Fragment(), RecyclerViewclick_Callback, GenresClickCallback {
     companion object {
         var pages_counterP = 1
+        private var list_allGenres= mutableListOf<Result_NowPlaying>()
     }
 
     lateinit var adapter: ItemAdapter
@@ -54,14 +65,16 @@ class MostPopularFragment : Fragment(), RecyclerViewclick_Callback {
         recyclerview_popular.setHasFixedSize(true)
         adapter = ItemAdapter(this.requireContext(), list, this)
         recyclerview_popular.adapter = adapter
-
+        listener_genres_clicked =this
 
         viewModel = ViewModelProvider(this, viewModelFactory).get(MostPopularViewModel::class.java)
         viewModel.getMostPopularPerPage(1)
         pages_counterP = 1
 
         viewModel.popular.observe(viewLifecycleOwner, Observer {
-            adapter.submitList(it.resultNowPlayings,"MostPopular")
+            submitListToAdapter(it)
+            list_allGenres.addAll(it.resultNowPlayings)
+
         })
         viewModel.countOfNowPLaying.observe(viewLifecycleOwner, Observer {
             if (it == 0 && adapter.itemCount==0)
@@ -110,6 +123,37 @@ class MostPopularFragment : Fragment(), RecyclerViewclick_Callback {
 
     }
 
+    private fun submitListToAdapter(it: NowPlaying) {
+        if (MainViewModel.selected_genres.isEmpty())
+            adapter.submitList(it.resultNowPlayings, "MostPopular")
+        else {
+            val filtered_list = SharedMethods.filterList(list_allGenres)
+            if(filtered_list.isEmpty())
+                viewModel.getMostPopularPerPage(++pages_counterP)
+            else {
+                val filteredList = SharedMethods.filterList(list_allGenres)
+                if (!filteredList.isEmpty())
+                    adapter.submitList(filteredList, "MostPopular")
+            }
+        }
+    }
+
+    override fun genreClicked() {
+        context?.success_toast("${MainViewModel.selected_genres.size}")
+        if (MainViewModel.selected_genres.isEmpty())
+            adapter.submitList(list_allGenres,"MostPopular")
+        else {
+            val filteredList= SharedMethods.filterList(list_allGenres)
+            if(!filteredList.isEmpty()){
+                adapter.clear()
+                adapter.submitList(filteredList,"MostPopular")
+            }else {
+                adapter.clear()
+                viewModel.getMostPopularPerPage(++pages_counterP)
+            }
+        }
+    }
+
     override fun onStop() {
         super.onStop()
         pages_counterP = 1
@@ -122,9 +166,16 @@ class MostPopularFragment : Fragment(), RecyclerViewclick_Callback {
     }
 
     override fun OnTvShowClick(id: Int) {
-        val action = MostPopularFragmentDirections.actionPopularToShowDetailsFragment(id,"mostPopular")
-        findNavController().navigate(action)
+
+        if(netMethods.hasInternet(requireContext(),true)){
+            val action = MostPopularFragmentDirections.actionPopularToShowDetailsFragment(id,"mostPopular")
+            findNavController().navigate(action)
+        }else{
+            context?.error_toast("No internet connection!")
+        }
+
     }
+
 
 
 

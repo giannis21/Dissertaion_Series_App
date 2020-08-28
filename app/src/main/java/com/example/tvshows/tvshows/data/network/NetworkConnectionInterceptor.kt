@@ -14,7 +14,7 @@ class NetworkConnectionIncterceptor(context: Context) : Interceptor {
     private val applicationContext: Context = context.applicationContext
 
     override fun intercept(chain: Interceptor.Chain): Response {
-        netMethods.hasInternet(applicationContext,1)
+        netMethods.hasInternet(applicationContext,false)
         return chain.proceed(chain.request())
     }
 }

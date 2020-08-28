@@ -1,16 +1,12 @@
 package com.example.tvshows.ui.watchlist
 
-import android.content.Context
 import android.os.Bundle
- import android.view.LayoutInflater
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.PopupMenu
-import androidx.appcompat.view.ContextThemeWrapper
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tvshows.R
@@ -23,7 +19,6 @@ import com.example.tvshows.tvshows.ui.callbacks.ClickCallback
 import com.example.tvshows.tvshows.ui.adapters.watchlistRecyclerViewAdapter
 import com.example.tvshows.tvshows.ui.watchlist.popUpMenu_watchlist.showPopUpMenu
 import com.example.tvshows.ui.mostpopular.watchListViewModelFactory
-import com.example.tvshows.utils.Extension_Utils.Companion.error_toast
 import com.example.tvshows.utils.Extension_Utils.Companion.success_toast
 import kotlinx.android.synthetic.main.watchlist_fragment.*
 
@@ -42,7 +37,7 @@ class WatchlistFragment : Fragment(),
         viewModelFactory = watchListViewModelFactory(repository, requireContext())
         return inflater.inflate(R.layout.watchlist_fragment, container, false)
     }
-
+  lateinit  var obj:TvShowDetails
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -63,6 +58,7 @@ class WatchlistFragment : Fragment(),
 
         viewModel.details.observe(viewLifecycleOwner, Observer {
             adapter.submitList(it, "")
+
         })
 
         viewModel.countOfWatchlist.observe(viewLifecycleOwner, Observer {
@@ -74,8 +70,9 @@ class WatchlistFragment : Fragment(),
     }
 
 
-    override fun onClick(menuItemView1: View, id: Int) {
-        showPopUpMenu(context,menuItemView1,id,viewModel)
+    override fun onClick(menuItemView1: View, obj: TvShowDetails) {
+         showPopUpMenu(context,menuItemView1,obj,viewModel)
+
     }
 
     override fun onDeleteIconClick(id: Int, name: String) {

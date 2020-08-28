@@ -41,4 +41,7 @@
     <string name="move_to_favorites">Move to favorites</string>
     <string name="move_to_seen">Move to seen</string>
     <string name="move_to_watchlist">Move to watchlist</string>
+    <string name="loading">Loading...</string>
+    <string name="cancel">Cancel</string>
+    <string name="rate_tv_show">Rate Tv show</string>
 </resources>

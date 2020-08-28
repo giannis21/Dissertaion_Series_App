@@ -2,6 +2,7 @@ package com.example.tvshows.ui.seen
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -10,6 +11,7 @@ import com.example.tvshows.R
 import com.example.tvshows.data.network.response.genres.Genre
 import com.example.tvshows.tvshows.ui.callbacks.GenresClickCallback
 import com.example.tvshows.tvshows.ui.show_details.ClickCallback
+import com.example.tvshows.utils.Extension_Utils.Companion.error_toast
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import org.json.JSONObject
@@ -25,9 +27,7 @@ class MainViewModel(var context: Context) : ViewModel() {
     }
 
     var counterOfSelected=0
-
-
-
+    var counter_of_clicks=0
     fun loadJSONFromAsset(chipsPrograms: ChipGroup): String? {
 
         val json: String
@@ -62,15 +62,17 @@ class MainViewModel(var context: Context) : ViewModel() {
 
         var flag_changeColor=0
         mChip.setOnClickListener {
-            Toast.makeText(context, "$id", Toast.LENGTH_SHORT).show()
+
             val genre= Genre(id, name)
             if(flag_changeColor==0 && ++counterOfSelected<=3){
+
                 selected_genres.add(genre)
                 mChip.chipIcon = (ContextCompat.getDrawable(context, R.drawable.ic_check))
                 mChip.chipBackgroundColor = context.getColorStateList(R.color.chipChecked)
                 flag_changeColor=1
                 listener_genres_clicked?.genreClicked()
             }else  {
+
                 selected_genres.remove(genre)
                 mChip.chipIcon = null
                 counterOfSelected--
@@ -78,7 +80,7 @@ class MainViewModel(var context: Context) : ViewModel() {
                 flag_changeColor=0
                 listener_genres_clicked?.genreClicked()
             }
-           // Toast.makeText(context, "mexri 3", Toast.LENGTH_SHORT).show()
+
         }
         chipsPrograms.addView(mChip)
     }

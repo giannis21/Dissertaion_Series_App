@@ -16,9 +16,16 @@
             type="android.view.View" />
     </data>
 
+
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
     <ScrollView
         android:id="@+id/ScrollView"
         android:layout_width="match_parent"
+
         android:layout_height="match_parent"
         android:scrollbarThumbVertical="@drawable/scrollbar_style">
 
@@ -34,23 +41,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/orange"
-                android:padding="3dp"
                 android:drawablePadding="25sp"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                tools:text="status:Ended"
-                app:statusifnull="@{viewmodel.details.status}"
+                android:padding="3dp"
                 android:paddingStart="10sp"
                 android:paddingEnd="12sp"
-                app:layout_constraintTop_toBottomOf="@+id/episode_title"
-                tools:layout_editor_absoluteX="0dp"
+                android:textColor="@color/white"
+                android:textSize="16sp"
                 app:drawableEndCompat="@drawable/ic_baseline_warning_24"
-                tools:ignore="RtlSymmetry" />
+                app:layout_constraintTop_toBottomOf="@+id/episode_title"
+                app:statusifnull="@{viewmodel.details.status}"
+                tools:ignore="RtlSymmetry"
+                tools:layout_editor_absoluteX="0dp"
+                tools:text="status:Ended" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="218dp"
                 android:layout_marginEnd="8dp"
+                android:background="@drawable/ripple_selector"
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?android:attr/selectableItemBackground">
@@ -91,27 +99,24 @@
 
                 </com.google.android.material.card.MaterialCardView>
 
-                    <com.google.android.material.floatingactionbutton.FloatingActionButton
-                        android:id="@+id/pin_icon"
-                        android:layout_width="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignParentTop="true"
-                        android:layout_gravity="start|top"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
-                        android:backgroundTint="@color/colorPrimaryTransparent"
-                        android:scaleType="center"
-                        android:src="@drawable/pin"
-                        android:onClick="@{()->viewmodel.pin_icon_clicked()}"
-                        app:fabSize="normal"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:tint="@color/textColorPrimary" />
-
-
-
-
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/pin_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_gravity="start|top"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/ripple_selector"
+                    android:backgroundTint="@color/colorPrimaryTransparent"
+                    android:onClick="@{()->viewmodel.pin_icon_clicked()}"
+                    android:scaleType="center"
+                    android:src="@drawable/pin"
+                    app:fabSize="normal"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/textColorPrimary" />
 
 
                 <RelativeLayout
@@ -262,29 +267,51 @@
 
                             tools:text="8.6" />
                     </GridLayout>
-
+                    <com.google.android.material.button.MaterialButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="39dp"
+                        android:backgroundTint="@color/chipChecked"
+                        android:layout_alignParentBottom="true"
+                        android:onClick="@{()->viewmodel.displayRating_dialog()}"
+                        android:layout_marginStart="15dp"
+                        android:drawableEnd="@drawable/like"
+                        android:padding="5dp"
+                        android:layout_alignParentEnd="true"
+                        app:iconTint="#ffffff"
+                        android:drawableTint="@color/white"
+                        android:text="@string/rate_tv_show"
+                        android:textAllCaps="false"
+                        app:cornerRadius="30dp"
+                        android:textSize="13sp" />
 
                 </RelativeLayout>
+
+
             </RelativeLayout>
+
 
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?android:attr/selectableItemBackground"
+                android:layout_marginTop="4dp"
                 android:layout_height="match_parent">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_margin="6dp">
+                    android:background="@drawable/ripple_selector"
+                    android:clickable="true"
+
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                    android:layout_marginStart="6dp"
+                    android:layout_marginEnd="6dp">
 
                     <TextView
                         android:id="@+id/episode_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="18dp"
+
 
                         android:background="@color/colorPrimary"
                         android:padding="3dp"
@@ -601,12 +628,17 @@
 
                         </androidx.core.widget.NestedScrollView>
                     </androidx.constraintlayout.widget.ConstraintLayout>
+
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
                 <!--                </androidx.constraintlayout.widget.ConstraintLayout>-->
             </RelativeLayout>
 
 
         </LinearLayout>
+
     </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

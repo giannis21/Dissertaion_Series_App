@@ -9,6 +9,8 @@
     <color name="colorPrimaryTransparent">#52403B3B</color>
     <color name="orange">#F0AD4E</color>
     <color name="chipChecked">#AC0D43</color>
+    <color name="votecolor">#015F68</color>
+
     F9DE82
     D2CADF
 </resources>

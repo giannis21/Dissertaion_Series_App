@@ -17,12 +17,15 @@ import com.example.tvshows.R
 import com.example.tvshows.RecyclerViewclick_Callback
 import com.example.tvshows.data.ApiClient
 import com.example.tvshows.data.RemoteRepository
+import com.example.tvshows.data.netMethods
 import com.example.tvshows.data.network.NetworkConnectionIncterceptor
 import com.example.tvshows.data.network.response.nowPlaying.NowPlaying
 import com.example.tvshows.data.network.response.nowPlaying.Result_NowPlaying
+import com.example.tvshows.tvshows.SharedMethods.filterList
 import com.example.tvshows.tvshows.ui.callbacks.GenresClickCallback
 import com.example.tvshows.ui.seen.MainViewModel.Companion.listener_genres_clicked
 import com.example.tvshows.ui.seen.MainViewModel.Companion.selected_genres
+import com.example.tvshows.utils.Extension_Utils.Companion.error_toast
 import com.example.tvshows.utils.Extension_Utils.Companion.setGone
 import com.example.tvshows.utils.Extension_Utils.Companion.setVisible
 import com.example.tvshows.utils.Extension_Utils.Companion.success_toast
@@ -35,7 +38,7 @@ class NowPlayingFragment : Fragment(), RecyclerViewclick_Callback,GenresClickCal
 
     companion object {
         var pages_counter = 1
-        var list_allGenres= mutableListOf<Result_NowPlaying>()
+        private var list_allGenres= mutableListOf<Result_NowPlaying>()
     }
 
     private lateinit var viewModelFactory: NowPlayingViewModelFactory
@@ -76,7 +79,6 @@ class NowPlayingFragment : Fragment(), RecyclerViewclick_Callback,GenresClickCal
         viewModel = ViewModelProvider(this, viewModelFactory).get(NowPlayingViewModel::class.java)
         //viewModel.ConnectivityError=this
 
-        // viewModel.fetchNowPlayingFromApi(pages_counter)
         viewModel.get_now_playing_per_page(pages_counter)
         addViewModelObservers()
 
@@ -141,33 +143,42 @@ class NowPlayingFragment : Fragment(), RecyclerViewclick_Callback,GenresClickCal
         if (selected_genres.isEmpty())
             adapter.submitList(it.resultNowPlayings, "nowPlayingFragment")
         else {
-            val filtered_list = filterList()
+            val filtered_list = filterList(list_allGenres)
             if(filtered_list.isEmpty())
                 viewModel.get_now_playing_per_page(++pages_counter)
             else {
-                val filteredList = filterList()
+                val filteredList = filterList(list_allGenres)
                 if (!filteredList.isEmpty())
                     adapter.submitList(filteredList, "nowPlayingFragment")
             }
         }
     }
 
+    override fun genreClicked() {
 
-    private fun filterList():MutableList<Result_NowPlaying> {
-        val tempList_filtered= mutableListOf<Result_NowPlaying>()
-        tempList_filtered.clear()
-        for(i in 0..list_allGenres.size-1){
+         if (selected_genres.isEmpty())
+             adapter.submitList(list_allGenres,"nowPlayingFragment")
+         else {
+              val filteredList=filterList(list_allGenres)
+              if(!filteredList.isEmpty()){
+                  adapter.clear()
+                  adapter.submitList(filteredList,"nowPlayingFragment")
+              }else {
+                  adapter.clear()
+                  viewModel.get_now_playing_per_page(++pages_counter)
+              }
+         }
+    }
 
-           list_allGenres[i].genre_ids.forEach{
-              for (selectedGenre in selected_genres) {
-                   if(selectedGenre.id == it) {
-                       tempList_filtered.add(list_allGenres[i])
-                       break
-                  }
-               }
-           }
-       }
-       return tempList_filtered
+
+    override fun OnTvShowClick(id: Int) {
+        if(netMethods.hasInternet(requireContext(),true)){
+            val action = NowPlayingFragmentDirections.actionNowPlayingToShowDetailsFragment(id,"nowPlaying")
+            findNavController().navigate(action)
+        }else{
+            context?.error_toast("No internet connection!")
+        }
+
     }
 
 
@@ -175,28 +186,6 @@ class NowPlayingFragment : Fragment(), RecyclerViewclick_Callback,GenresClickCal
         super.onStart()
         pages_counter = 1
         manager.scrollToPositionWithOffset(0, 0)
-    }
-
-
-    override fun genreClicked() {
-         context?.success_toast("${selected_genres.size}")
-         if (selected_genres.isEmpty())
-             adapter.submitList(list_allGenres,"nowPlayingFragment")
-         else {
-              val filteredList=filterList()
-              if(!filteredList.isEmpty()){
-                  adapter.clear()
-                  adapter.submitList(filteredList,"nowPlayingFragment")
-              }else {
-                  adapter.clear()
-              }
-         }
-    }
-
-
-    override fun OnTvShowClick(id: Int) {
-        val action = NowPlayingFragmentDirections.actionNowPlayingToShowDetailsFragment(id,"nowPlaying")
-        findNavController().navigate(action)
     }
 }
 

@@ -2,12 +2,14 @@ package com.example.tvshows.data
 
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 import com.example.tvshows.TvShowDao
 import com.example.tvshows.data.network.response.details.TvShowDetails
 import com.example.tvshows.data.network.response.nowPlaying.NowPlaying
 import com.example.tvshows.tvshows.utils.PreferenceUtils
 import kotlinx.coroutines.*
+import java.lang.Exception
 import java.util.*
 
 
@@ -50,8 +52,8 @@ class local_repository(private val tvShowDao: TvShowDao) {
     }
 
 
-    fun insertTvshowDetailstoDb(tvShow: TvShowDetails, viewModelScope: CoroutineScope):Job {
-       return viewModelScope.launch(Dispatchers.IO) {
+    fun insertTvshowDetailstoDb(tvShow: TvShowDetails, viewModelScope: CoroutineScope): Job {
+        return viewModelScope.launch(Dispatchers.IO) {
             tvShowDao.insertToTvShowDetails(tvShow)
         }
     }
@@ -69,12 +71,14 @@ class local_repository(private val tvShowDao: TvShowDao) {
         tvShowDao.deleteTvShowFromWatchlist(id)
     }
 
-    suspend fun moveFromwatchlistToFavorites(id: String) {
-        tvShowDao.moveFromwatchlistToFavorites(id)
-    }
 
-    suspend fun moveFromwatchlistToSeen(id: String) {
-        tvShowDao.moveFromwatchlistToSeen(id)
+    suspend fun moveToSeen(id: Int) {
+        try {
+            tvShowDao.moveToSeen(id.toString())
+        } catch (e: Exception) {
+            Log.i("aaaaa", e.message.toString())
+        }
+
     }
 
     fun countTvShowsFromWatchlist(): LiveData<Int> {
@@ -94,10 +98,6 @@ class local_repository(private val tvShowDao: TvShowDao) {
         tvShowDao.deleteTvShowFromFavorites(id)
     }
 
-    suspend fun moveFromFavoritesTowatchlist(id: String) {
-        tvShowDao.moveFromFavoritesTowatchlist(id)
-    }
-
 
     //-----------Seen methods-------------------//
     fun getSeen(): LiveData<MutableList<TvShowDetails>> {
@@ -109,12 +109,21 @@ class local_repository(private val tvShowDao: TvShowDao) {
         return tvShowDao.countTvShowsFromSeen()
     }
 
-    suspend fun moveFromSeenToFavorites(id: String) {
-        tvShowDao.moveFromSeenToFavorites(id)
+    suspend fun moveToFavorites(id: Int) {
+        try {
+            tvShowDao.moveToFavorites(id.toString())
+        } catch (e: Exception) {
+            Log.i("aaaaa", e.message.toString())
+        }
     }
 
-    suspend fun moveFromSeenToWatchlist(id: String) {
-        tvShowDao.moveFromSeenToWatchlist(id)
+    suspend fun moveToWatchlist(id: Int) {
+        try {
+            tvShowDao.moveToWatchlist(id.toString())
+        } catch (e: Exception) {
+            Log.i("aaaaa", e.message.toString())
+        }
+
     }
 
     suspend fun deleteTvShowFromSeen(id: String) {
@@ -123,9 +132,14 @@ class local_repository(private val tvShowDao: TvShowDao) {
 
     //------------------------DEtails----------------------------------//
 
-    suspend fun  rowExists(id: String, currentFragment: String, viewModelScope: CoroutineScope): Boolean {
-        return  tvShowDao.isRowIsExisted(id, currentFragment)
+    suspend fun rowExists(
+        id: String,
+        currentFragment: String,
+        viewModelScope: CoroutineScope
+    ): Boolean {
+        return tvShowDao.RowExists(id, currentFragment)
     }
+
 
 
 
@@ -143,5 +157,7 @@ class local_repository(private val tvShowDao: TvShowDao) {
         }
         return false
     }
+
+
 
 }

@@ -16,30 +16,33 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class TopRatedViewModel(private val remoteRepository: RemoteRepository, var context: Context) : ViewModel() {
-    var topRated = MutableLiveData<NowPlaying>()
 
+    var topRated = MutableLiveData<NowPlaying>()
     private var local_repository: local_repository
-     val countOfNowPLaying:LiveData<Int>
+    val countOfNowPLaying: LiveData<Int>
+    var total_pages = 2
+
     init {
         val TvshowsDao = TvShowRoomDatabase.getDatabase(context).tvShowDao()
         local_repository = local_repository(TvshowsDao)
-        countOfNowPLaying=local_repository.countOfNowPLaying
+        countOfNowPLaying = local_repository.countOfNowPLaying
     }
 
     fun getTopRatedPerPage(page: Int) {
         viewModelScope.launch {
             try {
-               // if(pages_counterTopRated == 1 && netMethods.hasInternet(context,0) && local_repository.fetchNeeded(context))
-                   // deleteAll()
+                // if(pages_counterTopRated == 1 && netMethods.hasInternet(context,0) && local_repository.fetchNeeded(context))
+                // deleteAll()
 
                 val result = async { local_repository.getTopRated(page) }.await()
 
-                if (result==null)
+                if (result == null)
                     fetchTopRatedFromApi(page)
                 else {
-                    if (page <= result.resultNowPlayings.size) {
+                    if (page <= total_pages) {
                         result.currentFragment = "topRated"
                         topRated.value = result
+                        total_pages = result.total_pages
                     }
                 }
             } catch (ex: Exception) {
@@ -53,20 +56,18 @@ class TopRatedViewModel(private val remoteRepository: RemoteRepository, var cont
         viewModelScope.launch {
             try {
                 val obj = remoteRepository.getTopRated(page)
-                obj.currentFragment="topRated"
+                obj.currentFragment = "topRated"
                 topRated.value = obj
 
-                if (page <= obj.resultNowPlayings.size)
-                    local_repository.insertFromAPItoDb(obj,viewModelScope)
-
+                if (page <= total_pages) {
+                    local_repository.insertFromAPItoDb(obj, viewModelScope)
+                    total_pages=obj.total_pages
+                }
             } catch (ex: Exception) {
                 context.error_toast(ex.message.toString())
                 pages_counterTopRated--
             }
         }
     }
-
-
-
 
 }

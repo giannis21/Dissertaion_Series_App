@@ -19,11 +19,7 @@
             app:popExitAnim="@anim/to_right" />
         <action
             android:id="@+id/action_now_playing_to_showDetailsFragment"
-            app:destination="@id/showDetailsFragment"
-            app:enterAnim="@anim/from_right"
-            app:exitAnim="@anim/to_left"
-            app:popEnterAnim="@anim/from_left"
-            app:popExitAnim="@anim/to_right" />
+            app:destination="@id/showDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/favorites"
@@ -132,11 +128,7 @@
         tools:layout="@layout/show_details_fragment" >
         <action
             android:id="@+id/action_showDetailsFragment_to_now_playing"
-            app:destination="@id/now_playing"
-            app:enterAnim="@anim/from_left"
-            app:exitAnim="@anim/to_right"
-            app:popEnterAnim="@anim/from_right"
-            app:popExitAnim="@anim/to_left" />
+            app:destination="@id/now_playing" />
         <argument
             android:name="id"
             app:argType="integer" />

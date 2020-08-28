@@ -16,12 +16,14 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 
-class NowPlayingViewModel(private val remoteRepository: RemoteRepository, var context: Context) : ViewModel() {
+class NowPlayingViewModel(private val remoteRepository: RemoteRepository, var context: Context) :
+    ViewModel() {
 
     private var local_repository: local_repository
     var allPlayingNowInDb: LiveData<List<NowPlaying>>
     var playingNowDb_ = MutableLiveData<NowPlaying>()
     var countOfNowPLaying: LiveData<Int>
+    var total_pages = 2
 
     init {
         val TvshowsDao = TvShowRoomDatabase.getDatabase(context).tvShowDao()
@@ -37,14 +39,15 @@ class NowPlayingViewModel(private val remoteRepository: RemoteRepository, var co
 
                 //καθαρίζω τον πίνακα now_playing της βάσης δεδομένων μόνο αν έχει περάσει 1 ώρα && βρίσκομαι στην 1η σελίδα && είμαι ενεργός στο ίντερνετ
                 //if (pages_counter == 1 && netMethods.hasInternet(context, 0) && local_repository.fetchNeeded(context))
-                    local_repository.deleteAllFromNowPlaying(viewModelScope)
+                local_repository.deleteAllFromNowPlaying(viewModelScope)
 
                 val result = async { local_repository.get_now_playing_per_page(page) }.await()
 
                 if (result == null)
                     fetchNowPlayingFromApi(page)
                 else {
-                    if (page <= result.resultNowPlayings.size) {
+                    if (page <= total_pages) {
+                        total_pages = result.total_pages
                         result.currentFragment = "nowPlaying"
                         playingNowDb_.value = result
                     }
@@ -60,13 +63,13 @@ class NowPlayingViewModel(private val remoteRepository: RemoteRepository, var co
     fun fetchNowPlayingFromApi(page: Int) {
         viewModelScope.launch {
             try {
-                val obj = remoteRepository.fetch_now_playing(page)
-                obj.currentFragment = "nowPlaying"
-                playingNowDb_.value = obj
-
-                if (page <= obj.resultNowPlayings.size)
+                if (page <= total_pages) {
+                    val obj = remoteRepository.fetch_now_playing(page)
+                    obj.currentFragment = "nowPlaying"
+                    playingNowDb_.value = obj
                     local_repository.insertFromAPItoDb(obj, viewModelScope)
-
+                    total_pages = obj.total_pages
+                }
             } catch (ex: Exception) {
                 context.error_toast(ex.message.toString())
                 pages_counter--

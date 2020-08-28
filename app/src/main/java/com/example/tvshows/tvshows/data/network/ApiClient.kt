@@ -4,13 +4,14 @@ import com.example.tvshows.data.network.response.genres.Genres
 import com.example.tvshows.data.network.NetworkConnectionIncterceptor
  import com.example.tvshows.data.network.response.details.TvShowDetails
 import com.example.tvshows.data.network.response.nowPlaying.NowPlaying
+import com.example.tvshows.tvshows.data.network.response.Guest_Session
+import com.example.tvshows.tvshows.data.network.response.RateResponse
+import com.google.gson.JsonObject
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.GET
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.*
 
 
 interface ApiClient {
@@ -33,7 +34,14 @@ interface ApiClient {
     @GET("tv/top_rated")
     suspend fun getTopRated(@Query("language") lang: String ="en-US", @Query("page") page:String): NowPlaying
 
+//-------------------rate show---------------------------------//
+    @Headers("Content-Type: application/json")
+    @POST("tv/{tv_id}/rating")
+    suspend fun rateTvShow(@Path("tv_id") id:String,@Query("guest_session_id") guest_session_id:String,@Body rate: JsonObject): RateResponse
 
+    //get guest_session id to rate
+    @GET("authentication/guest_session/new")
+    suspend fun getguest_session(): Guest_Session
 
     companion object {
 

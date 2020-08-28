@@ -5,7 +5,7 @@
     android:id="@+id/layoutBottomSheet"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/colorPrimary"
+    android:background="@color/colorAccent"
     android:orientation="vertical"
     app:behavior_hideable="true"
     app:behavior_peekHeight="0dp"
@@ -18,7 +18,7 @@
         android:textColor="@android:color/white"
         app:drawableTint="@color/white"
         android:drawablePadding="17dp"
-
+        android:background="@drawable/ripple_selector"
         android:text="@string/add_to_watchlist"
         android:textSize="17sp"
         android:clickable="true"
@@ -50,7 +50,7 @@
         android:text="@string/add_to_favorites"
         android:textSize="17sp"
         android:padding="17dp"
-
+        android:background="@drawable/ripple_selector"
         app:layout_constraintTop_toBottomOf="@+id/firstview"
         app:drawableStartCompat="@drawable/favorite" />
     <View
@@ -70,7 +70,7 @@
         android:textColor="@android:color/white"
         android:text="@string/add_to_seen"
         android:textSize="17sp"
-
+        android:background="@drawable/ripple_selector"
         app:drawableTint="@color/white"
         android:drawablePadding="17dp"
         android:padding="17dp"

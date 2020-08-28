@@ -39,7 +39,6 @@ class ShowDetailsFragment : Fragment() {
         binding.setLifecycleOwner(this)
         val view:View=binding.root
         binding.viewmodel=viewModel
-        addObserver()
 
 
         return view
@@ -51,20 +50,6 @@ class ShowDetailsFragment : Fragment() {
 
         val args= arguments?.let { ShowDetailsFragmentArgs.fromBundle(it) }
         viewModel.getTvShowDetails(args?.id.toString(),args?.deriveFrom)
-
-    }
-
-    private fun addObserver() {
-        viewModel.details.observe(viewLifecycleOwner, Observer {
-        })
-    }
-
-    @SuppressLint("InflateParams")
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-
-       // animate()
 
     }
 

@@ -32,8 +32,14 @@
     <style name="SmallerText" parent="TextAppearance.AppCompat.Small">
         <item name="android:textSize">33sp</item>
     </style>
+    <style name="SelectableItemBackground">
 
+        <item name="android:background">@color/white</item>
+    </style>
 
+    <style name="ThemeOverlay.groupTitle" parent="">
+        <item name="android:textColorSecondary">@color/textColorPrimary</item>
+    </style>
 <!--    <style name="" parent="Theme.AppCompat.Light">-->
 
 <!--        <item name="android:background">@color/colorPrimary</item>-->
