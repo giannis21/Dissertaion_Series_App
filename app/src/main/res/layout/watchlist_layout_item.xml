@@ -136,11 +136,12 @@
         android:background="@drawable/oval_watchlist"
         android:padding="7dp"
         android:scaleType="fitXY"
+        app:updateDrawable="@{tvShow}"
         android:src="@drawable/ic_event"
         app:layout_constraintEnd_toEndOf="@+id/watchlist_layout"
         app:layout_constraintStart_toEndOf="@+id/watchlist_layout"
         app:layout_constraintTop_toTopOf="parent" />
-
+<!--        app:tint="@{tvShow.underNotification ? @color/colorPrimary : @color/textColorPrimary }"-->
     <ImageView
         android:id="@+id/delete_icon"
         android:layout_width="46dp"

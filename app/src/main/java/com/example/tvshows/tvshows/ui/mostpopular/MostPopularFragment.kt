@@ -1,5 +1,6 @@
 package com.example.tvshows.ui.mostpopular
 
+import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import androidx.fragment.app.Fragment
@@ -7,14 +8,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AbsListView
+import androidx.activity.addCallback
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tvshows.ItemAdapter
+import com.example.tvshows.MainActivity
 import com.example.tvshows.R
-import com.example.tvshows.RecyclerViewclick_Callback
 import com.example.tvshows.data.ApiClient
 import com.example.tvshows.data.RemoteRepository
 import com.example.tvshows.data.netMethods
@@ -23,8 +25,10 @@ import com.example.tvshows.data.network.response.nowPlaying.NowPlaying
 import com.example.tvshows.data.network.response.nowPlaying.Result_NowPlaying
 import com.example.tvshows.tvshows.SharedMethods
 import com.example.tvshows.tvshows.ui.callbacks.GenresClickCallback
+import com.example.tvshows.tvshows.ui.callbacks.OnFragmentNavigationListener
 import com.example.tvshows.ui.nowplaying.NowPlayingFragment
 import com.example.tvshows.ui.nowplaying.NowPlayingFragmentDirections
+import com.example.tvshows.ui.nowplaying.NowPlayingViewModelFactory
 import com.example.tvshows.ui.seen.MainViewModel
 import com.example.tvshows.ui.seen.MainViewModel.Companion.listener_genres_clicked
 import com.example.tvshows.utils.Extension_Utils.Companion.error_toast
@@ -33,15 +37,17 @@ import com.example.tvshows.utils.Extension_Utils.Companion.setVisible
 import com.example.tvshows.utils.Extension_Utils.Companion.success_toast
 import kotlinx.android.synthetic.main.connectivity_layout.*
 import kotlinx.android.synthetic.main.most_popular_fragment.*
+import kotlinx.android.synthetic.main.now_playing_fragment.*
 
-class MostPopularFragment : Fragment(), RecyclerViewclick_Callback, GenresClickCallback {
+class MostPopularFragment : Fragment(), GenresClickCallback {
     companion object {
         var pages_counterP = 1
         private var list_allGenres= mutableListOf<Result_NowPlaying>()
+        var navigate_listener_MostPop: OnFragmentNavigationListener?=null
     }
 
     lateinit var adapter: ItemAdapter
-    private lateinit var viewModelFactory: MostPopularViewModelFactory
+    private lateinit var viewModelFactory: NowPlayingViewModelFactory
     private lateinit var viewModel: MostPopularViewModel
     var isScrolling: Boolean = false
     var currentItems: Int = 0
@@ -53,17 +59,21 @@ class MostPopularFragment : Fragment(), RecyclerViewclick_Callback, GenresClickC
         val networkConnectionIncterceptor = this.context?.applicationContext?.let { NetworkConnectionIncterceptor(it) }
         val webService = ApiClient(networkConnectionIncterceptor!!)
         val repository = RemoteRepository(webService)
-        viewModelFactory = MostPopularViewModelFactory(repository, requireContext())
+        viewModelFactory = NowPlayingViewModelFactory(repository, requireContext())
         return inflater.inflate(R.layout.most_popular_fragment, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
         val list: MutableList<Result_NowPlaying> = mutableListOf()
         manager = LinearLayoutManager(this.context)
         recyclerview_popular.layoutManager = manager
         recyclerview_popular.setHasFixedSize(true)
-        adapter = ItemAdapter(this.requireContext(), list, this)
+
+        adapter = ItemAdapter(this.requireContext(), list){id ->
+             navigate_listener_MostPop?.onFragmentNavigation(MostPopularFragmentDirections.actionPopularToShowDetailsFragment(id,"mostPopular"))
+        }
         recyclerview_popular.adapter = adapter
         listener_genres_clicked =this
 
@@ -76,8 +86,8 @@ class MostPopularFragment : Fragment(), RecyclerViewclick_Callback, GenresClickC
             list_allGenres.addAll(it.resultNowPlayings)
 
         })
-        viewModel.countOfNowPLaying.observe(viewLifecycleOwner, Observer {
-            if (it == 0 && adapter.itemCount==0)
+        viewModel.connectivityProblem.observe(viewLifecycleOwner, Observer {
+            if (it)
                 no_internet_message_popular.visibility = View.VISIBLE
             else
                 no_internet_message_popular.visibility=View.GONE
@@ -86,7 +96,9 @@ class MostPopularFragment : Fragment(), RecyclerViewclick_Callback, GenresClickC
         arrow_up_popular.setOnClickListener {
             manager.scrollToPositionWithOffset(0, 0)
         }
-
+        NowPlayingFragment.filter_listener ={
+            adapter.filter.filter(it)
+        }
          internet_retry.setOnClickListener {
              viewModel.getMostPopularPerPage(1)
          }
@@ -122,10 +134,16 @@ class MostPopularFragment : Fragment(), RecyclerViewclick_Callback, GenresClickC
 
 
     }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            (requireActivity() as MainActivity).onBackPressedfunction()
+        }
+    }
 
     private fun submitListToAdapter(it: NowPlaying) {
         if (MainViewModel.selected_genres.isEmpty())
-            adapter.submitList(it.resultNowPlayings, "MostPopular")
+            adapter.submitList(it.resultNowPlayings, "MostPopular","")
         else {
             val filtered_list = SharedMethods.filterList(list_allGenres)
             if(filtered_list.isEmpty())
@@ -133,7 +151,7 @@ class MostPopularFragment : Fragment(), RecyclerViewclick_Callback, GenresClickC
             else {
                 val filteredList = SharedMethods.filterList(list_allGenres)
                 if (!filteredList.isEmpty())
-                    adapter.submitList(filteredList, "MostPopular")
+                    adapter.submitList(filteredList, "MostPopular","")
             }
         }
     }
@@ -141,12 +159,12 @@ class MostPopularFragment : Fragment(), RecyclerViewclick_Callback, GenresClickC
     override fun genreClicked() {
         context?.success_toast("${MainViewModel.selected_genres.size}")
         if (MainViewModel.selected_genres.isEmpty())
-            adapter.submitList(list_allGenres,"MostPopular")
+            adapter.submitList(list_allGenres,"MostPopular","")
         else {
             val filteredList= SharedMethods.filterList(list_allGenres)
             if(!filteredList.isEmpty()){
                 adapter.clear()
-                adapter.submitList(filteredList,"MostPopular")
+                adapter.submitList(filteredList,"MostPopular","")
             }else {
                 adapter.clear()
                 viewModel.getMostPopularPerPage(++pages_counterP)
@@ -165,15 +183,11 @@ class MostPopularFragment : Fragment(), RecyclerViewclick_Callback, GenresClickC
         manager.scrollToPositionWithOffset(0, 0)
     }
 
-    override fun OnTvShowClick(id: Int) {
-
-        if(netMethods.hasInternet(requireContext(),true)){
-            val action = MostPopularFragmentDirections.actionPopularToShowDetailsFragment(id,"mostPopular")
-            findNavController().navigate(action)
-        }else{
-            context?.error_toast("No internet connection!")
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if(context is OnFragmentNavigationListener){
+            navigate_listener_MostPop =context
         }
-
     }
 
 

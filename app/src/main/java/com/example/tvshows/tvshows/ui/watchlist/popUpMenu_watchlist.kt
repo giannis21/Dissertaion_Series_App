@@ -11,14 +11,15 @@ import com.example.tvshows.R
 import com.example.tvshows.TvShowRoomDatabase
 import com.example.tvshows.data.local_repository
 import com.example.tvshows.data.network.response.details.TvShowDetails
+import com.example.tvshows.tvshows.ui.favorites.PopUpMenuStates
 import com.example.tvshows.ui.watchlist.WatchlistFragmentDirections
 import com.example.tvshows.ui.watchlist.WatchlistViewModel
 
 object popUpMenu_watchlist {
 
-    fun showPopUpMenu(context: Context?, menuItemView1: View, obj: TvShowDetails, viewModel:WatchlistViewModel){
+    fun showPopUpMenu(context: Context?, menuItemView1: View, obj: (PopUpMenuStates) -> Unit) {
 
-        val ctw :Context= ContextThemeWrapper(context, R.style.popupTheme)
+        val ctw: Context = ContextThemeWrapper(context, R.style.popupTheme)
         val popup = PopupMenu(ctw, menuItemView1)
 
         popup.inflate(R.menu.popup_menu)
@@ -27,16 +28,15 @@ object popUpMenu_watchlist {
         popup.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.move_to_seen_menu -> {
-                    viewModel.moveToSeen(obj)
+                    obj.invoke(PopUpMenuStates.moveToSeen)
                     true
                 }
                 R.id.move_to_favorites_menu -> {
-                    viewModel.moveToFavorites(obj)
+                    obj.invoke(PopUpMenuStates.move_to_favorites)
                     true
                 }
                 R.id.more_info_menu -> {
-                    val action = WatchlistFragmentDirections.actionWatchlistToShowDetailsFragment(obj.id, "watchList")
-                    Navigation.findNavController(menuItemView1).navigate(action)
+                    obj.invoke(PopUpMenuStates.moreInfo_menu)
                     true
                 }
                 else -> false
@@ -45,3 +45,4 @@ object popUpMenu_watchlist {
     }
 
 }
+

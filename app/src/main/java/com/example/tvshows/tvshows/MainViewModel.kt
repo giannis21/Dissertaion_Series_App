@@ -27,7 +27,6 @@ class MainViewModel(var context: Context) : ViewModel() {
     }
 
     var counterOfSelected=0
-    var counter_of_clicks=0
     fun loadJSONFromAsset(chipsPrograms: ChipGroup): String? {
 
         val json: String
@@ -37,7 +36,7 @@ class MainViewModel(var context: Context) : ViewModel() {
             val jsonObj = JSONObject(json)
             val jsonArray = jsonObj.getJSONArray("genres")
 
-            for (i in 0..jsonArray.length() - 1) {
+            for (i in 0 until jsonArray.length()) {
                 val jsonObject = jsonArray.getJSONObject(i)
                 createDynamicChips(jsonObject.getString("id").toInt(),jsonObject.getString("name"),chipsPrograms)
             }

@@ -37,22 +37,19 @@ class Details_dialogs(var context: Context) {
             view2.close.setOnClickListener { alertDialog.dismiss() }
             view2.submit.setOnClickListener {
                 var rate=view2.rating_bar.rating
-                if(rate==0f)
-                    rate=1f
-                else
-                    rate=rate*2
-
+                rate = if(rate==0f) 1f else rate*2
                 viewmodel.rateTvshow((rate).toString())
                 alertDialog.dismiss()
             }
             view2.close.setOnClickListener {
                 alertDialog.dismiss()
             }
+
         }
 
     }
 
-    lateinit var alertDialog: AlertDialog
+    lateinit var alertDialog1: AlertDialog
 
     val builder: AlertDialog.Builder = AlertDialog.Builder(context)
     val layoutInflaterAndroid = LayoutInflater.from(context)
@@ -61,11 +58,12 @@ class Details_dialogs(var context: Context) {
 
     fun displayLoadingDialog(context: Context) {
         builder.setView(view2)
-        alertDialog = builder.create()
-        alertDialog.show()
+        alertDialog1 = builder.create()
+        alertDialog1.show()
+
     }
 
     fun hideLoadingDialog() {
-        alertDialog.dismiss()
+        alertDialog1.dismiss()
     }
 }

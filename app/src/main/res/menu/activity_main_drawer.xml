@@ -16,7 +16,7 @@
 
         <item android:id="@+id/Top_Rated"
             android:title="@string/top_rated"
-            android:icon="@drawable/top"/>
+            android:icon="@drawable/popular"/>
 
 
 
@@ -36,7 +36,7 @@
                 android:title="@string/seen"
                 />
             <item android:id="@+id/settings"
-                android:icon="@drawable/settings"
+                android:icon="@drawable/settings_main_menu"
 
                 android:title="@string/settings"
                 />

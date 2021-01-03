@@ -26,15 +26,16 @@
 
     </androidx.core.widget.NestedScrollView>
 
-    <TextView
+    <ImageView
         android:id="@+id/nowShowFound"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-
-        android:background="@color/colorPrimary"
+        android:layout_height="215dp"
+        android:visibility="gone"
+        tools:visibility="visible"
         android:layout_centerInParent="true"
         android:gravity="center"
-        android:textSize="26sp"
+        android:src="@drawable/no_results"
+        android:text="No Tv shows found!"
         android:textColor="@color/textColorPrimary"
-        android:text="No Tv shows found!" />
+        android:textSize="26sp" />
 </RelativeLayout>

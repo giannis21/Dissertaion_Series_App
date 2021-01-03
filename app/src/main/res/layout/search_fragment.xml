@@ -3,9 +3,27 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:windowSoftInputMode="adjustPan|adjustResize"
+    android:fitsSystemWindows="true"
     android:layout_height="match_parent"
     tools:context=".ui.search.SearchFragment">
 
+    <ImageView
+        android:id="@+id/no_res"
+        android:layout_width="match_parent"
+        android:layout_height="215dp"
+        android:visibility="gone"
+        android:layout_centerInParent="true"
+        android:src="@drawable/no_results"
+          />
+    <ImageView
+        android:layout_width="wrap_content"
+        android:id="@+id/search"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_centerInParent="true"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/ic_search_icon" />
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/text_input_layout"
         android:layout_width="match_parent"
@@ -20,9 +38,8 @@
             android:id="@+id/searcheditText"
             android:textColor="@android:color/black"
             android:layout_width="match_parent"
-
             android:layout_height="wrap_content"
-            android:hint="Search tv show" />
+            android:hint="@string/search_tv_show" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.button.MaterialButton
@@ -30,12 +47,11 @@
         android:layout_below="@+id/text_input_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
+        android:visibility="gone"
         android:text="Search"
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-
         android:textColor="@color/textColorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -48,6 +64,7 @@
         android:layout_below="@+id/searchbtn"
         android:layout_height="match_parent"
         android:scrollbarFadeDuration="@integer/config_navAnimTime"
+        tools:listitem="@layout/item_layout"
         android:scrollbarThumbVertical="@drawable/scrollbar_style"
         android:scrollbars="vertical"
         app:layout_constraintTop_toBottomOf="@+id/searchbtn" />

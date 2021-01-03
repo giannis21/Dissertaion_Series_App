@@ -1,6 +1,12 @@
 package com.example.tvshows
 
+import android.graphics.Color
 import android.graphics.drawable.Drawable
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.BackgroundColorSpan
+import android.text.style.ForegroundColorSpan
+import android.text.style.TextAppearanceSpan
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -20,13 +26,47 @@ import com.bumptech.glide.request.target.Target
 import com.example.tvshows.data.network.response.details.CreatedBy
 import com.example.tvshows.data.network.response.details.Genre
 import com.example.tvshows.data.network.response.details.Season
+import com.example.tvshows.data.network.response.details.TvShowDetails
 import com.example.tvshows.tvshows.ui.show_details.ClickCallback
 import com.example.tvshows.utils.Extension_Utils.Companion.setGone
+import timber.log.Timber
+import java.lang.Exception
 
 
 object bindingAdapters {
 
     var listener: ClickCallback? = null
+
+
+    @BindingAdapter(value = ["spannableInSearch", "currentSearchName"])
+    @JvmStatic
+    fun TextView.spannableInSearch(tvshowName1: String?, currentSearchName: String) {
+        if(currentSearchName != ""){
+            val tvshowName = tvshowName1?.toLowerCase()
+            val tvshowNameSpan = SpannableString(tvshowName1)
+            val length_of_word = currentSearchName.length
+            try {
+                val indexOf = tvshowName?.indexOf(currentSearchName.toLowerCase())!!
+                if (indexOf >= 0) {
+                    tvshowNameSpan.setSpan(BackgroundColorSpan(Color.WHITE),indexOf, length_of_word + indexOf, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    tvshowNameSpan.setSpan(ForegroundColorSpan(Color.BLACK), indexOf, length_of_word + indexOf, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    tvshowNameSpan.setSpan(TextAppearanceSpan(context, R.style.caption_bold), 0, tvshowName.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    this.text = tvshowNameSpan
+                } else {
+                    tvshowNameSpan.setSpan(TextAppearanceSpan(context, R.style.caption), 0, tvshowName.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    this.text = tvshowNameSpan
+                }
+            } catch (e: Exception) {
+                tvshowNameSpan.setSpan(TextAppearanceSpan(context, R.style.caption), 0, tvshowName?.length!!, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                this.text = tvshowNameSpan
+            }
+        }else{
+            this.text = tvshowName1
+        }
+
+    }
+
+
 
     @BindingAdapter("imageUrl", "progressbar")
     @JvmStatic
@@ -35,12 +75,23 @@ object bindingAdapters {
         Glide.with(view.context).load("https://image.tmdb.org/t/p/w500/$url")
             .error(Glide.with(view.context).load(R.drawable.placeholder))
             .listener(object : RequestListener<Drawable> {
-                override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    isFirstResource: Boolean
+                ): Boolean {
                     progressBar.setGone()
                     return false
                 }
 
-                override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                override fun onResourceReady(
+                    resource: Drawable?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    dataSource: DataSource?,
+                    isFirstResource: Boolean
+                ): Boolean {
                     progressBar.setGone()
                     return false
                 }
@@ -52,7 +103,6 @@ object bindingAdapters {
     fun loadImageDetails(view: ImageView, url: String?, progressBar: ProgressBar) {
 
         Glide.with(view.context).load("https://image.tmdb.org/t/p/w500/$url")
-
             .listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
                     progressBar.setGone()
@@ -74,12 +124,23 @@ object bindingAdapters {
         Glide.with(view.context).load("https://image.tmdb.org/t/p/w500/$url")
 
             .listener(object : RequestListener<Drawable> {
-                override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                     return false
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    return false
                 }
 
-                override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                     return false
+                override fun onResourceReady(
+                    resource: Drawable?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    dataSource: DataSource?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    return false
                 }
             })
             .error(Glide.with(view.context).load(R.drawable.clapperboard)).into(view)
@@ -159,6 +220,35 @@ object bindingAdapters {
         view.setText(creator)   //apla bazo ta eidi tis seiras kai an den iparxo0n bazo "-"
     }
 
+    @BindingAdapter("updateDrawable")
+    @JvmStatic
+    fun updateDrawable(view: ImageView, tvShowDetails: TvShowDetails) {
+        //view.setImageDrawable(ResourcesCompat.getDrawable(view.resources, R.drawable.ic_event, null))
+        Timber.e("dateeeee  ${tvShowDetails.next_episode_to_air?.air_date.toString()}")
+        if (tvShowDetails.underNotification)
+            view.setColorFilter(ContextCompat.getColor(view.context, R.color.white))
+        else
+            view.setColorFilter(ContextCompat.getColor(view.context, R.color.colorPrimary))
+        var a = System.currentTimeMillis()
+        var b=tvShowDetails.exactDateOfNotification
+
+
+//        if(tvShowDetails.exactDateOfNotification != ""){
+//            val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+//            val now= sdf.format(Calendar.getInstance().time)
+//            val dateOfNot = tvShowDetails.exactDateOfNotification
+//
+//            if (dateOfNot < now  || tvShowDetails.next_episode_to_air?.air_date == "") {
+//                view.setColorFilter(ContextCompat.getColor(view.context, R.color.notification_stoped))
+//                view.isEnabled=false
+//            }else{
+//                view.isEnabled=true
+//            }
+//        }
+
+
+    }
+
 
     @BindingAdapter("inflateData", "nested_scrollview")
     @JvmStatic
@@ -181,16 +271,20 @@ object bindingAdapters {
             LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, maxHeight).apply {
                 weight = 1.0f
                 gravity = Gravity.CENTER
-                setMargins(0, 20, 0, 0)
+                setMargins(0, 0, 0, 0)
             }
 
-            val layoutParams = ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, maxHeight)
+            val layoutParams =
+                ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, maxHeight)
             nestedScrollView.layoutParams = layoutParams
 
 
             for (i in startPoint until data.size) {
                 val seasons_Txt1 = TextView(layout.context)
-                val params1: LinearLayout.LayoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply {
+                val params1: LinearLayout.LayoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
                     weight = 1.0f
                     gravity = Gravity.CENTER
                     setMargins(0, 20, 0, 0)
@@ -198,24 +292,57 @@ object bindingAdapters {
 
                 seasons_Txt1.layoutParams = params1
                 seasons_Txt1.id = View.generateViewId()
-                seasons_Txt1.setBackgroundColor(ContextCompat.getColor(layout.context, R.color.colorPrimary))
-                seasons_Txt1.setTextColor(ContextCompat.getColor(layout.context, R.color.textColorPrimary))
+                seasons_Txt1.setBackgroundColor(
+                    ContextCompat.getColor(
+                        layout.context,
+                        R.color.colorPrimary
+                    )
+                )
+                seasons_Txt1.setTextColor(
+                    ContextCompat.getColor(
+                        layout.context,
+                        R.color.textColorPrimary
+                    )
+                )
                 seasons_Txt1.setPadding(3, 3, 3, 3)
 
                 if (startPoint == 0)
-                    seasons_Txt1.text = String.format(layout.context.getString(R.string.season, Integer.toString(i + 1)))
+                    seasons_Txt1.text = String.format(
+                        layout.context.getString(
+                            R.string.season,
+                            Integer.toString(i + 1)
+                        )
+                    )
                 else
-                    seasons_Txt1.text = String.format(layout.context.getString(R.string.season, Integer.toString(i)))
+                    seasons_Txt1.text = String.format(
+                        layout.context.getString(
+                            R.string.season,
+                            Integer.toString(i)
+                        )
+                    )
 
                 layout.addView(seasons_Txt1)
 //--------------------------------------------------------------------------------------------
                 val seasons_Txt2 = TextView(layout.context)
-                seasons_Txt2.background = ContextCompat.getDrawable(layout.context, R.drawable.bottomcircled_bordered_details)
+                seasons_Txt2.background = ContextCompat.getDrawable(
+                    layout.context,
+                    R.drawable.bottomcircled_bordered_details
+                )
                 seasons_Txt2.id = View.generateViewId()
                 seasons_Txt2.setPadding(3, 3, 3, 3)
-                seasons_Txt2.setBackgroundColor(ContextCompat.getColor(layout.context,R.color.colorAccent))
+                seasons_Txt2.setBackgroundColor(
+                    ContextCompat.getColor(
+                        layout.context,
+                        R.color.colorAccent
+                    )
+                )
                 seasons_Txt2.setTextColor(ContextCompat.getColor(layout.context, R.color.white))
-                seasons_Txt2.text = String.format(layout.context.getString(R.string.episodes, data.get(i).episode_count.toString()))
+                seasons_Txt2.text = String.format(
+                    layout.context.getString(
+                        R.string.episodes,
+                        data.get(i).episode_count.toString()
+                    )
+                )
                 layout.addView(seasons_Txt2)
                 layout.setPadding(30, 20, 30, 30)
 

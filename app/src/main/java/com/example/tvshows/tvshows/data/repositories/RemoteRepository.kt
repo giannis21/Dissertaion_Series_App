@@ -23,6 +23,7 @@ class RemoteRepository(private val my_Api: ApiClient) {
         return my_Api.getMostPopular("en_US",page.toString())
     }
     suspend fun fetch_now_playing(page:Int): NowPlaying {
+        var a=my_Api.getPlayingNow("en_US",page.toString())
         return my_Api.getPlayingNow("en_US",page.toString())
     }
     suspend fun getTvShowDetails(id:String): TvShowDetails {

@@ -17,8 +17,7 @@ object popUpMenu_favorites {
     fun showPopUpMenu_fav(
         context: Context?,
         menuItemView1: View,
-        obj: TvShowDetails,
-        viewModel: FavoritesViewModel
+        obj: (PopUpMenuStates) -> Unit
     ) {
 
         val ctw: Context = ContextThemeWrapper(context, R.style.popupTheme)
@@ -30,16 +29,15 @@ object popUpMenu_favorites {
         popup.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.move_to_seen_menu_fav -> {
-                    viewModel.moveToSeen(obj)
+                    obj.invoke(PopUpMenuStates.moveToSeen)
                     true
                 }
                 R.id.move_to_watchlist_menu_fav -> {
-                    viewModel.moveTowatchlist(obj)
+                    obj.invoke(PopUpMenuStates.moveTowatchlist)
                     true
                 }
-                R.id.more_info_menu_fav -> {//.actionWatchlistToShowDetailsFragment(id, "watchList")
-                    val action = FavoritesFragmentDirections.actionFavoritesToShowDetailsFragment(obj.id, "favorites")
-                    Navigation.findNavController(menuItemView1).navigate(action)
+                R.id.more_info_menu_fav -> {
+                    obj.invoke(PopUpMenuStates.moreInfo_menu)
                     true
                 }
                 else -> false
@@ -47,4 +45,11 @@ object popUpMenu_favorites {
         }
     }
 
+}
+
+enum class PopUpMenuStates {
+    moveToSeen,
+    moveTowatchlist,
+    moreInfo_menu,
+    move_to_favorites
 }

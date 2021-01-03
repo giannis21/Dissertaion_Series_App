@@ -47,6 +47,9 @@ interface TvShowDao {
     @Query("SELECT * FROM now_playing where page = :page AND currentFragment='topRated'")
     suspend fun getTopRated(page: Int): NowPlaying
 
+    @Query("DELETE FROM now_playing Where currentFragment='topRated'")
+    suspend fun deleteAllFromTop()
+
 //----------------------------------Watchlist queries------------------------------------//
 
     @Query("SELECT * FROM show_details where currentFragment='watchlist'")
@@ -58,8 +61,17 @@ interface TvShowDao {
     @Query("SELECT * FROM show_details where id=:id")
     suspend fun getTvShowDetails(id: String): TvShowDetails
 
+    @Query("SELECT * FROM show_details WHERE currentFragment='watchlist' ")
+    fun getTvShowDetailsAll():LiveData<MutableList<TvShowDetails>>
+
     @Query("DELETE FROM show_details Where id=:id AND currentFragment='watchlist'")
     suspend fun deleteTvShowFromWatchlist(id: String)
+
+    @Query("UPDATE show_details SET underNotification=:b where id=:id")
+    suspend fun underNotification(id: String,b: Boolean)
+
+    @Query("UPDATE show_details SET exactDateOfNotification=:date_of_notification where id=:id")
+    suspend fun update_exact_time_of_notification(id: String,date_of_notification: String)
 
     // move from watchlist to favorites
 
@@ -100,7 +112,6 @@ interface TvShowDao {
 
     @Query("SELECT EXISTS(SELECT * FROM show_details WHERE id = :id AND currentFragment=:currentFragment)")
     suspend fun RowExists(id : String, currentFragment:String) : Boolean
-
 
 
 

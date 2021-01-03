@@ -35,4 +35,6 @@ data class TvShowDetails(
     val vote_count: Int
 ) {
     var currentFragment: String = ""
+    var underNotification=false
+    var exactDateOfNotification : String = ""
 }

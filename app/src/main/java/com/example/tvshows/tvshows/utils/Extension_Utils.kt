@@ -2,16 +2,32 @@ package com.example.tvshows.utils
 
 import android.content.Context
 import android.view.View
-import android.widget.HorizontalScrollView
-import android.widget.ProgressBar
-import android.widget.RelativeLayout
-import android.widget.Toast
+import android.view.inputmethod.InputMethodManager
+import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.NestedScrollView
 import es.dmoral.toasty.Toasty
 
 class Extension_Utils {
     companion object {
 
+        fun Context.hideKeyboard(view:View) {
+            val imm: InputMethodManager? = this?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+            imm?.hideSoftInputFromWindow(view.windowToken, 0)
+        }
+
+        fun ImageView.setVisible(){
+            this.visibility=View.VISIBLE
+        }
+        fun ImageView.setGone() {
+            this.visibility = View.GONE
+        }
+        fun TextView.setVisible() {
+            this.visibility = View.VISIBLE
+        }
+        fun TextView.setGone() {
+            this.visibility = View.GONE
+        }
         fun NestedScrollView.setVisible() {
             this.visibility = View.VISIBLE
         }

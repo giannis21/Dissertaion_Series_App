@@ -1,15 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="#2c2a2e"
     android:layout_height="match_parent"
-    tools:context=".ui.favorites.FavoritesFragment">
+    tools:context=".ui.settings.MySettingsFragment">
+
 
     <TextView
         android:layout_width="match_parent"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:textSize="15dp"
+        android:textColor="#D81B60"
+        android:layout_height="wrap_content"
+        android:text="Notifications" />
+
+    <CheckedTextView
+        android:id="@+id/vibrate_checked"
+        android:layout_width="match_parent"
+        android:layout_height="41dp"
+        android:checkMarkTint="@color/red"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+
+        android:checkMark="?android:attr/textCheckMark"
         android:gravity="center"
+        android:paddingEnd="10dp"
+        android:text="Enable vibration on notifications"
+        android:textColor="@android:color/white"
+        android:textSize="18sp" />
+    <View
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="3dp"
+        android:background="@color/colorAccent"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"/>
+    <Switch
+        android:id="@+id/sound_switch"
+        android:theme="@style/SwitchTheme"
+        android:trackTint="@color/red"
+        android:layout_width="match_parent"
+        android:layout_height="41dp"
+        android:backgroundTint="@color/red"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:paddingEnd="10dp"
+        android:text="Sound on notification"
+        android:textColor="@android:color/white"
+        android:textSize="18sp" />
+    <View
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="3dp"
+        android:background="@color/colorAccent"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"/>
 
-        android:layout_height="match_parent"
-        android:text="settings" />
 
-</androidx.constraintlayout.widget.ConstraintLayout >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:textSize="15sp"
+        android:textColor="@color/red"
+        android:layout_height="wrap_content"
+        android:text="Time picker" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/timer_picker_id1"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:paddingEnd="10dp"
+            android:paddingTop="10dp"
+
+
+            android:text="Time for the notification to be shown"
+            android:textColor="@android:color/white"
+            android:textSize="18sp" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/display_preferredTimeId"
+            android:layout_marginStart="10dp"
+            android:text="not set"
+            android:textColor="#9e9e9e"
+            android:textSize="13sp" />
+    </LinearLayout>
+
+
+
+</LinearLayout>

@@ -1,20 +1,23 @@
 package com.example.tvshows.ui.toprated
 
+import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AbsListView
+import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tvshows.ItemAdapter
+import com.example.tvshows.MainActivity
 import com.example.tvshows.R
-import com.example.tvshows.RecyclerViewclick_Callback
 import com.example.tvshows.data.ApiClient
 import com.example.tvshows.data.RemoteRepository
 import com.example.tvshows.data.netMethods
@@ -23,10 +26,11 @@ import com.example.tvshows.data.network.response.nowPlaying.NowPlaying
 import com.example.tvshows.data.network.response.nowPlaying.Result_NowPlaying
 import com.example.tvshows.tvshows.SharedMethods
 import com.example.tvshows.tvshows.ui.callbacks.GenresClickCallback
-import com.example.tvshows.tvshows.ui.callbacks.showConnectivityError
+import com.example.tvshows.tvshows.ui.callbacks.OnFragmentNavigationListener
 import com.example.tvshows.ui.mostpopular.MostPopularFragment
-import com.example.tvshows.ui.mostpopular.TopRatedViewModelFactory
 import com.example.tvshows.ui.nowplaying.NowPlayingFragment
+import com.example.tvshows.ui.nowplaying.NowPlayingFragmentDirections
+import com.example.tvshows.ui.nowplaying.NowPlayingViewModelFactory
 import com.example.tvshows.ui.seen.MainViewModel
 import com.example.tvshows.ui.seen.MainViewModel.Companion.listener_genres_clicked
 import com.example.tvshows.utils.Extension_Utils.Companion.error_toast
@@ -36,16 +40,16 @@ import com.example.tvshows.utils.Extension_Utils.Companion.success_toast
 import kotlinx.android.synthetic.main.connectivity_layout.*
 import kotlinx.android.synthetic.main.top_rated_fragment.*
 
-class TopRatedFragment : Fragment(), RecyclerViewclick_Callback ,GenresClickCallback{
+class TopRatedFragment : Fragment(),GenresClickCallback{
 
     companion object {
         var pages_counterTopRated = 1
         private var list_allGenres= mutableListOf<Result_NowPlaying>()
-
+        var navigate_listener_Top: OnFragmentNavigationListener?=null
     }
 
     lateinit var adapter: ItemAdapter
-    private lateinit var viewModelFactory: TopRatedViewModelFactory
+    private lateinit var viewModelFactory: NowPlayingViewModelFactory
 
     var isScrolling: Boolean = false
     var currentItems: Int = 0
@@ -64,7 +68,7 @@ class TopRatedFragment : Fragment(), RecyclerViewclick_Callback ,GenresClickCall
         }
         val webService = ApiClient(networkConnectionIncterceptor!!)
         val repository = RemoteRepository(webService)
-        viewModelFactory = TopRatedViewModelFactory(repository, requireContext())
+        viewModelFactory = NowPlayingViewModelFactory(repository, requireContext())
         return inflater.inflate(R.layout.top_rated_fragment, container, false)
     }
 
@@ -79,7 +83,9 @@ class TopRatedFragment : Fragment(), RecyclerViewclick_Callback ,GenresClickCall
         manager = LinearLayoutManager(this.context)
         recyclerview_topRated.layoutManager = manager
         recyclerview_topRated.setHasFixedSize(true)
-        adapter = ItemAdapter(this.requireContext(), list, this)
+        adapter = ItemAdapter(this.requireContext(), list){show_id ->
+             navigate_listener_Top?.onFragmentNavigation(TopRatedFragmentDirections.actionTopRatedToShowDetailsFragment(show_id,"topRated"))
+        }
         recyclerview_topRated.adapter = adapter
 
         viewModel = ViewModelProvider(this, viewModelFactory).get(TopRatedViewModel::class.java)
@@ -89,9 +95,11 @@ class TopRatedFragment : Fragment(), RecyclerViewclick_Callback ,GenresClickCall
             submitListToAdapter(it)
             list_allGenres.addAll(it.resultNowPlayings)
         })
-
-        viewModel.countOfNowPLaying.observe(viewLifecycleOwner, Observer {
-            if (it == 0 && adapter.itemCount==0)
+        NowPlayingFragment.filter_listener ={
+            adapter.filter.filter(it)
+        }
+        viewModel.connectivityProblem.observe(viewLifecycleOwner, Observer {
+            if (it)
                 no_internet_message_top_rated.visibility = View.VISIBLE
             else
                 no_internet_message_top_rated.visibility=View.GONE
@@ -136,7 +144,7 @@ class TopRatedFragment : Fragment(), RecyclerViewclick_Callback ,GenresClickCall
     }
     private fun submitListToAdapter(it: NowPlaying) {
         if (MainViewModel.selected_genres.isEmpty())
-            adapter.submitList(it.resultNowPlayings, "topRated")
+            adapter.submitList(it.resultNowPlayings, "topRated","")
         else {
             val filtered_list = SharedMethods.filterList(list_allGenres)
             if(filtered_list.isEmpty())
@@ -144,21 +152,27 @@ class TopRatedFragment : Fragment(), RecyclerViewclick_Callback ,GenresClickCall
             else {
                 val filteredList = SharedMethods.filterList(list_allGenres)
                 if (!filteredList.isEmpty())
-                    adapter.submitList(filteredList, "topRated")
+                    adapter.submitList(filteredList, "topRated","")
             }
         }
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            (requireActivity() as MainActivity).onBackPressedfunction()
+        }
+    }
 
     override fun genreClicked() {
         context?.success_toast("${MainViewModel.selected_genres.size}")
         if (MainViewModel.selected_genres.isEmpty())
-            adapter.submitList(list_allGenres,"topRated")
+            adapter.submitList(list_allGenres,"topRated","")
         else {
             val filteredList= SharedMethods.filterList(list_allGenres)
             if(!filteredList.isEmpty()){
                 adapter.clear()
-                adapter.submitList(filteredList,"topRated")
+                adapter.submitList(filteredList,"topRated","")
             }else {
                 adapter.clear()
                 viewModel.getTopRatedPerPage(++pages_counterTopRated)
@@ -172,16 +186,11 @@ class TopRatedFragment : Fragment(), RecyclerViewclick_Callback ,GenresClickCall
         manager.scrollToPositionWithOffset(0, 0)
     }
 
-    override fun OnTvShowClick(id: Int) {
-
-
-        if(netMethods.hasInternet(requireContext(),true)){
-            val action = TopRatedFragmentDirections.actionTopRatedToShowDetailsFragment(id,"topRated")
-            findNavController().navigate(action)
-        }else
-            context?.error_toast("No internet connection!")
-
-
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if(context is OnFragmentNavigationListener){
+            navigate_listener_Top=context
+        }
     }
 
 }

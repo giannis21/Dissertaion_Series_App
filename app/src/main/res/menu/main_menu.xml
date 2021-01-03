@@ -8,10 +8,14 @@
         android:title="filter"
         app:showAsAction="always" />
     <item
-        android:id="@+id/search"
+        android:id="@+id/search_menu"
         android:icon="@drawable/ic_search"
         android:title="search"
         app:showAsAction="always" />
 
-
+    <item
+        android:id="@+id/TopMenuIcon"
+        android:icon="@drawable/settings_main_menu"
+        android:title="menuIcon"
+        app:showAsAction="always" />
 </menu>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_layout"
@@ -7,75 +7,413 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-<RelativeLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-<!--    <LinearLayout-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:id="@+id/dropdown_menu"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:gravity="center"-->
-<!--        android:background="@color/colorPrimary"-->
-<!--        android:orientation="vertical">-->
-<!--        <include android:id="@+id/include2" layout="@layout/shr_backdrop" />-->
-<!--    </LinearLayout>-->
-
-    <include
-        android:id="@+id/include"
-        layout="@layout/app_bar_main"
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
+        android:visibility="visible"
+        tools:visibility="visible"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent">
 
-    <HorizontalScrollView
-        android:id="@+id/genresId"
-        android:layout_width="match_parent"
-        android:layout_marginEnd="10dp"
-        android:layout_marginStart="10dp"
-        android:visibility="gone"
-        android:scrollbars="horizontal"
-        android:scrollbarThumbHorizontal="@drawable/scrollbar_style"
-        android:layout_height="47dp"
-        android:layout_below="@+id/include">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="match_parent"
+            android:layout_height="119dp"
+            android:layout_centerInParent="true"
+            android:visibility="gone" />
+        <!--    <LinearLayout-->
+        <!--        android:layout_width="match_parent"-->
+        <!--        android:id="@+id/dropdown_menu"-->
+        <!--        android:layout_height="wrap_content"-->
+        <!--        android:gravity="center"-->
+        <!--        android:background="@color/colorPrimary"-->
+        <!--        android:orientation="vertical">-->
+        <!--        <include android:id="@+id/include2" layout="@layout/shr_backdrop" />-->
+        <!--    </LinearLayout>-->
+        <FrameLayout
+            android:id="@+id/frameLayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:visibility="visible" />
 
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chipsPrograms"
+        <include
+            android:id="@+id/include"
+            layout="@layout/app_bar_main"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/searchcontainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/include"
+            android:layout_marginBottom="4dp"
+            android:alpha="0.0"
+            android:visibility="visible"
+            tools:visibility="visible">
+
+            <LinearLayout
+                android:id="@+id/linearbtns"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:chipSpacing="8dp"
-                 >
+                android:layout_marginTop="13dp"
 
-            </com.google.android.material.chip.ChipGroup>
-        </LinearLayout>
+                android:layout_marginBottom="8dp"
+                android:orientation="horizontal"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-    </HorizontalScrollView>
-    <fragment
-        android:id="@+id/nav_host_fragment"
-        android:name="androidx.navigation.fragment.NavHostFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:defaultNavHost="true"
-        android:layout_below="@+id/genresId"
-        app:navGraph="@navigation/mobile_navigation"
-         />
+                <Button
+                    android:id="@+id/searchHere"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginHorizontal="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/search_btn_style"
+                    android:shadowColor="#A8A8A8"
+                    android:shadowDx="7"
+                    android:shadowDy="7"
+                    android:shadowRadius="5"
+                    android:text="Search here"
+                    android:textAllCaps="false"
+                    android:textSize="17dp" />
 
+                <Button
+                    android:id="@+id/searchOnline"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginHorizontal="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/search_btn_style"
+                    android:shadowColor="#A8A8A8"
+                    android:shadowDx="7"
+                    android:shadowDy="7"
+                    android:shadowRadius="5"
+                    android:text="Search online"
+                    android:textAllCaps="false"
+                    android:textSize="17dp" />
+            </LinearLayout>
 
-</RelativeLayout>
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/nav_view"
-        android:theme="@style/ThemeOverlay.groupTitle"
-        android:tint="@android:color/white"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/text_input_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:visibility="gone"
+                app:endIconMode="clear_text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="visible">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/searchHereEdittext"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Search tv show"
+                    android:textColor="@android:color/black" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <HorizontalScrollView
+            android:id="@+id/genresId"
+            android:layout_width="match_parent"
+            android:layout_height="47dp"
+
+            android:layout_below="@+id/searchcontainer"
+            android:layout_marginHorizontal="5dp"
+            android:scrollbarThumbHorizontal="@drawable/scrollbar_style"
+            android:scrollbars="none"
+            android:visibility="invisible"
+
+            app:layout_constraintTop_toBottomOf="@id/searchcontainer"
+            tools:visibility="visible">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chipsPrograms"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:shadowColor="#A8A8A8"
+                    android:shadowDx="7"
+                    android:shadowDy="7"
+                    app:chipSpacing="8dp">
+
+                </com.google.android.material.chip.ChipGroup>
+            </LinearLayout>
+
+        </HorizontalScrollView>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/main_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/include">
+
+            <fragment
+                android:id="@+id/nav_host_fragment"
+                android:name="androidx.navigation.fragment.NavHostFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:defaultNavHost="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:navGraph="@navigation/mobile_navigation" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </RelativeLayout>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineHorizontal"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        app:itemIconTint="@android:color/white"
-        app:itemTextColor="@color/white"
-        android:background="@color/colorAccent"
-        app:headerLayout="@layout/nav_header_main"
-        app:menu="@menu/activity_main_drawer" />
-</androidx.drawerlayout.widget.DrawerLayout>
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.4" />
+
+    <androidx.constraintlayout.motion.widget.MotionLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:id="@+id/motionLayoutId"
+        app:layout_constraintTop_toBottomOf="@+id/guidelineHorizontal"
+        app:layoutDescription="@xml/activity_main_scene"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:id="@+id/imageViewIconMenu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:elevation="3dp"
+            android:src="@drawable/icon_manu"
+            app:layout_constraintEnd_toEndOf="@id/constraintLayoutNavBar"
+            app:layout_constraintTop_toTopOf="@id/constraintLayoutNavBar" />
+
+        <ImageView
+            android:id="@+id/closeIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="10dp"
+            android:paddingStart="10dp"
+            android:layout_marginBottom="10dp"
+            android:elevation="3dp"
+            android:src="@drawable/ic_baseline_close_24"
+            app:layout_constraintBottom_toBottomOf="@id/constraintLayoutNavBar"
+            app:layout_constraintEnd_toEndOf="@id/constraintLayoutNavBar" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineVertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.024330901" />
+
+
+        <ImageView
+            android:id="@+id/nowPlayingIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:elevation="3dp"
+            android:src="@drawable/cinema"
+            app:layout_constraintStart_toStartOf="@id/guidelineVertical"
+            app:layout_constraintTop_toBottomOf="@id/imageViewHeader"
+            app:tint="@color/white" />
+
+        <TextView
+            android:id="@+id/nowPlayingTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="40dp"
+            android:elevation="3dp"
+            android:text="Now Playing"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@id/guidelineVertical"
+            app:layout_constraintTop_toBottomOf="@+id/imageViewHeader" />
+
+        <ImageView
+            android:id="@+id/mostPopIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:elevation="3dp"
+            android:src="@drawable/popular"
+            app:layout_constraintStart_toStartOf="@id/guidelineVertical"
+            app:layout_constraintTop_toBottomOf="@id/nowPlayingIcon"
+            app:tint="@color/white" />
+
+        <TextView
+            android:id="@+id/mostPopulartext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="15dp"
+            android:elevation="3dp"
+            android:text="Most Popular"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@id/guidelineVertical"
+            app:layout_constraintTop_toBottomOf="@+id/nowPlayingTxt" />
+
+        <ImageView
+            android:id="@+id/TopRatedicon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:elevation="3dp"
+            android:src="@drawable/top"
+            app:layout_constraintStart_toStartOf="@id/guidelineVertical"
+            app:layout_constraintTop_toBottomOf="@id/mostPopIcon"
+            app:tint="@color/white" />
+
+        <TextView
+            android:id="@+id/TopRatedTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="15dp"
+            android:elevation="3dp"
+            android:text="Top Rated"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@id/guidelineVertical"
+            app:layout_constraintTop_toBottomOf="@+id/mostPopulartext" />
+
+        <ImageView
+            android:id="@+id/watchlistIicon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:elevation="3dp"
+            android:src="@drawable/watchlist"
+
+            app:layout_constraintStart_toStartOf="@id/guidelineVertical"
+            app:layout_constraintTop_toBottomOf="@id/TopRatedicon"
+            app:tint="@color/white" />
+
+        <TextView
+            android:id="@+id/watchlisttxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="15dp"
+            android:elevation="3dp"
+            android:text="Watchlist"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp" />
+        <ImageView
+            android:id="@+id/favoritesIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:elevation="3dp"
+            android:src="@drawable/favorite"
+            app:layout_constraintStart_toStartOf="@id/guidelineVertical"
+            app:layout_constraintTop_toBottomOf="@id/watchlistIicon"
+            app:tint="@color/white" />
+
+        <TextView
+            android:id="@+id/favoritestxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="15dp"
+            android:elevation="3dp"
+            app:layout_constraintStart_toStartOf="@id/guidelineVertical"
+            app:layout_constraintTop_toBottomOf="@+id/watchlisttxt"
+            android:text="Favorites"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp" />
+        <ImageView
+            android:id="@+id/seenIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:elevation="3dp"
+            android:src="@drawable/seen"
+            app:layout_constraintStart_toStartOf="@id/guidelineVertical"
+            app:layout_constraintTop_toBottomOf="@id/favoritesIcon"
+            app:tint="@color/white" />
+
+        <TextView
+            android:id="@+id/seentxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="15dp"
+            android:elevation="3dp"
+            app:layout_constraintStart_toStartOf="@id/guidelineVertical"
+            app:layout_constraintTop_toBottomOf="@+id/favoritestxt"
+            android:text="Seen"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/textViewLogout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="50dp"
+            android:visibility="gone"
+            android:elevation="3dp"
+            android:text="Log out"
+            android:textColor="#A1A3AC"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@+id/constraintLayoutNavBar"
+            app:layout_constraintStart_toStartOf="@id/guidelineVertical" />
+
+        <!--I use ShapeableImageView to make top right of image round-->
+        <ImageView
+
+            android:id="@+id/imageViewHeader"
+            android:layout_width="0dp"
+            android:layout_height="150dp"
+            android:layout_marginTop="56dp"
+            android:elevation="2dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/boardcinema1"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@id/constraintLayoutNavBar"
+            app:layout_constraintStart_toStartOf="@id/constraintLayoutNavBar"
+            app:layout_constraintTop_toTopOf="@id/constraintLayoutNavBar" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayoutNavBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="60dp"
+            android:layout_marginBottom="60dp"
+            android:background="@drawable/navdrawer_background"
+            android:elevation="1dp"
+            android:orientation="vertical"
+            android:padding="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:backgroundTint="#2A2E43"
+            app:fabSize="mini"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@android:drawable/ic_dialog_info" />
+
+    </androidx.constraintlayout.motion.widget.MotionLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
     <!--        app:itemTextColor="@android:color/white"-->

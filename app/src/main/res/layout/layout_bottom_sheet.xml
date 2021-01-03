@@ -5,76 +5,88 @@
     android:id="@+id/layoutBottomSheet"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/colorAccent"
     android:orientation="vertical"
     app:behavior_hideable="true"
     app:behavior_peekHeight="0dp"
-    app:layout_behavior="@string/bottom_sheet_behavior">
+    app:layout_behavior="LockBottomSheetBehaviour"
+    >
 
-    <TextView
-        android:id="@+id/add_to_watchlist"
-        android:layout_width="match_parent"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textColor="@android:color/white"
-        app:drawableTint="@color/white"
-        android:drawablePadding="17dp"
-        android:background="@drawable/ripple_selector"
-        android:text="@string/add_to_watchlist"
-        android:textSize="17sp"
-        android:clickable="true"
-        android:focusable="true"
-        android:foreground="?android:attr/selectableItemBackground"
-        android:padding="17dp"
 
+        android:background="@drawable/up_bordered_radius_24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:drawableLeftCompat="@drawable/watchlist" />
-    <View
-        android:layout_width="match_parent"
-        android:id="@+id/firstview"
-        android:layout_height="0.1dip"
-        android:background="@color/windowBackGround"
-        app:layout_constraintTop_toBottomOf="@+id/add_to_watchlist"
-        />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <TextView
-        android:id="@+id/add_to_favorites"
-        android:layout_width="match_parent"
-        android:clickable="true"
-        android:focusable="true"
-        android:foreground="?android:attr/selectableItemBackground"
-        android:layout_height="wrap_content"
-        android:textColor="@color/white"
-        app:drawableTint="@color/white"
-        android:drawablePadding="17dp"
-        android:text="@string/add_to_favorites"
-        android:textSize="17sp"
-        android:padding="17dp"
-        android:background="@drawable/ripple_selector"
-        app:layout_constraintTop_toBottomOf="@+id/firstview"
-        app:drawableStartCompat="@drawable/favorite" />
-    <View
-        android:layout_width="match_parent"
-        android:id="@+id/secview"
-        android:background="@color/windowBackGround"
-        android:layout_height="0.1dip"
-        app:layout_constraintTop_toBottomOf="@+id/add_to_favorites"
-        />
-    <TextView
-        android:id="@+id/add_to_seen"
-        android:layout_width="match_parent"
-        android:clickable="true"
-        android:focusable="true"
-        android:foreground="?android:attr/selectableItemBackground"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/white"
-        android:text="@string/add_to_seen"
-        android:textSize="17sp"
-        android:background="@drawable/ripple_selector"
-        app:drawableTint="@color/white"
-        android:drawablePadding="17dp"
-        android:padding="17dp"
 
-        app:layout_constraintTop_toBottomOf="@+id/secview"
-        app:drawableStartCompat="@drawable/seen" />
+        <TextView
+            android:id="@+id/add_to_watchlist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ripple_selector"
+            android:clickable="true"
+            android:drawablePadding="17dp"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:padding="17dp"
+            android:text="@string/add_to_watchlist"
+            android:textColor="@android:color/white"
+            android:textSize="17sp"
+            app:drawableLeftCompat="@drawable/watchlist"
+            app:drawableTint="@color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/firstview"
+            android:layout_width="match_parent"
+            android:layout_height="0.1dip"
+            android:background="@color/windowBackGround"
+            app:layout_constraintTop_toBottomOf="@+id/add_to_watchlist" />
+
+        <TextView
+            android:id="@+id/add_to_favorites"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ripple_selector"
+            android:clickable="true"
+            android:drawablePadding="17dp"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:padding="17dp"
+            android:text="@string/add_to_favorites"
+            android:textColor="@color/white"
+            android:textSize="17sp"
+            app:drawableStartCompat="@drawable/favorite"
+            app:drawableTint="@color/white"
+            app:layout_constraintTop_toBottomOf="@+id/firstview" />
+
+        <View
+            android:id="@+id/secview"
+            android:layout_width="match_parent"
+            android:layout_height="0.1dip"
+            android:background="@color/windowBackGround"
+            app:layout_constraintTop_toBottomOf="@+id/add_to_favorites" />
+
+        <TextView
+            android:id="@+id/add_to_seen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ripple_selector"
+            android:clickable="true"
+            android:drawablePadding="17dp"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:padding="17dp"
+            android:text="@string/add_to_seen"
+            android:textColor="@android:color/white"
+            android:textSize="17sp"
+            app:drawableStartCompat="@drawable/seen"
+
+            app:drawableTint="@color/white"
+            app:layout_constraintTop_toBottomOf="@+id/secview" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

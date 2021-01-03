@@ -34,7 +34,7 @@ interface ApiClient {
     @GET("tv/top_rated")
     suspend fun getTopRated(@Query("language") lang: String ="en-US", @Query("page") page:String): NowPlaying
 
-//-------------------rate show---------------------------------//
+//-------------------rate show---------------------------------//s
     @Headers("Content-Type: application/json")
     @POST("tv/{tv_id}/rating")
     suspend fun rateTvShow(@Path("tv_id") id:String,@Query("guest_session_id") guest_session_id:String,@Body rate: JsonObject): RateResponse

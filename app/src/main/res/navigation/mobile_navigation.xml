@@ -11,13 +11,6 @@
         android:label="@string/now_playing"
         tools:layout="@layout/now_playing_fragment" >
         <action
-            android:id="@+id/action_now_playing_to_searchFragment"
-            app:destination="@id/searchFragment"
-            app:enterAnim="@anim/from_up"
-            app:exitAnim="@anim/to_bottom"
-            app:popEnterAnim="@anim/from_left"
-            app:popExitAnim="@anim/to_right" />
-        <action
             android:id="@+id/action_now_playing_to_showDetailsFragment"
             app:destination="@id/showDetailsFragment" />
     </fragment>
@@ -26,9 +19,6 @@
         android:name="com.example.tvshows.ui.favorites.FavoritesFragment"
         android:label="@string/favorites"
         tools:layout="@layout/favorites_fragment" >
-        <action
-            android:id="@+id/action_favorites_to_searchFragment"
-            app:destination="@id/searchFragment" />
         <action
             android:id="@+id/action_favorites_to_showDetailsFragment"
             app:destination="@id/showDetailsFragment" />
@@ -39,9 +29,6 @@
         android:label="@string/most_popular"
         tools:layout="@layout/most_popular_fragment" >
         <action
-            android:id="@+id/action_Popular_to_searchFragment"
-            app:destination="@id/searchFragment" />
-        <action
             android:id="@+id/action_Popular_to_showDetailsFragment"
             app:destination="@id/showDetailsFragment" />
     </fragment>
@@ -51,9 +38,6 @@
         android:label="@string/seen"
         tools:layout="@layout/seen_fragment" >
         <action
-            android:id="@+id/action_seen_to_searchFragment"
-            app:destination="@id/searchFragment" />
-        <action
             android:id="@+id/action_seen_to_showDetailsFragment"
             app:destination="@id/showDetailsFragment" />
     </fragment>
@@ -61,19 +45,12 @@
         android:id="@+id/settings"
         android:name="com.example.tvshows.ui.settings.SettingsFragment"
         android:label="@string/settings"
-        tools:layout="@layout/settings_fragment" >
-        <action
-            android:id="@+id/action_settings_to_searchFragment"
-            app:destination="@id/searchFragment" />
-    </fragment>
+        tools:layout="@layout/settings_fragment" />
     <fragment
         android:id="@+id/Top_Rated"
         android:name="com.example.tvshows.ui.toprated.TopRatedFragment"
         android:label="@string/top_rated"
         tools:layout="@layout/top_rated_fragment" >
-        <action
-            android:id="@+id/action_Top_Rated_to_searchFragment"
-            app:destination="@id/searchFragment" />
         <action
             android:id="@+id/action_Top_Rated_to_showDetailsFragment"
             app:destination="@id/showDetailsFragment" />
@@ -84,9 +61,6 @@
         android:label="@string/watchlist"
         tools:layout="@layout/watchlist_fragment" >
         <action
-            android:id="@+id/action_watchlist_to_searchFragment"
-            app:destination="@id/searchFragment" />
-        <action
             android:id="@+id/action_watchlist_to_showDetailsFragment"
             app:destination="@id/showDetailsFragment" />
     </fragment>
@@ -96,28 +70,6 @@
         android:label="Search tv show"
         tools:layout="@layout/search_fragment">
         <action
-            android:id="@+id/action_searchFragment_to_now_playing"
-            app:destination="@id/now_playing"
-            app:exitAnim="@anim/from_left" />
-        <action
-            android:id="@+id/action_searchFragment_to_Popular"
-            app:destination="@id/Popular" />
-        <action
-            android:id="@+id/action_searchFragment_to_favorites"
-            app:destination="@id/favorites" />
-        <action
-            android:id="@+id/action_searchFragment_to_Top_Rated"
-            app:destination="@id/Top_Rated" />
-        <action
-            android:id="@+id/action_searchFragment_to_settings"
-            app:destination="@id/settings" />
-        <action
-            android:id="@+id/action_searchFragment_to_watchlist"
-            app:destination="@id/watchlist" />
-        <action
-            android:id="@+id/action_searchFragment_to_seen"
-            app:destination="@id/seen" />
-        <action
             android:id="@+id/action_searchFragment_to_showDetailsFragment"
             app:destination="@id/showDetailsFragment" />
     </fragment>
@@ -126,18 +78,25 @@
         android:name="com.example.tvshows.ui.show_details.ShowDetailsFragment"
         android:label="Tv Show Details"
         tools:layout="@layout/show_details_fragment" >
-        <action
-            android:id="@+id/action_showDetailsFragment_to_now_playing"
-            app:destination="@id/now_playing" />
         <argument
             android:name="id"
             app:argType="integer" />
         <argument
             android:name="deriveFrom"
             app:argType="string" />
-        <action
-            android:id="@+id/action_showDetailsFragment_to_searchFragment"
-            app:destination="@id/searchFragment" />
 
     </fragment>
+    <action android:id="@+id/action_global_now_playing" app:destination="@id/now_playing"/>
+    <action android:id="@+id/action_global_favorites" app:destination="@id/favorites"/>
+    <action android:id="@+id/action_global_Popular" app:destination="@id/Popular"/>
+    <action android:id="@+id/action_global_Top_Rated" app:destination="@id/Top_Rated"/>
+    <action android:id="@+id/action_global_settings" app:destination="@id/settings"/>
+    <action android:id="@+id/action_global_seen" app:destination="@id/seen"/>
+    <action android:id="@+id/action_global_watchlist" app:destination="@id/watchlist"/>
+    <action android:id="@+id/action_global_searchFragment"
+        app:destination="@id/searchFragment"
+        app:enterAnim="@anim/from_up"
+        app:exitAnim="@anim/to_bottom"
+        app:popEnterAnim="@anim/from_left"
+        app:popExitAnim="@anim/to_right" />
 </navigation>

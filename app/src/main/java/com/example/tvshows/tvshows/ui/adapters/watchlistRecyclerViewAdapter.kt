@@ -2,6 +2,7 @@ package com.example.tvshows.tvshows.ui.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -14,11 +15,10 @@ import kotlinx.android.synthetic.main.favorites_layout_item.view.*
 import kotlinx.android.synthetic.main.watchlist_layout_item.view.*
 import kotlinx.android.synthetic.main.watchlist_layout_item.view.delete_icon
 
-class watchlistRecyclerViewAdapter(var context: Context, private val list: MutableList<TvShowDetails>, private var listener: ClickCallback) : RecyclerView.Adapter<watchlistRecyclerViewAdapter.WatchlistCardViewHolder>() {
+class watchlistRecyclerViewAdapter(var context: Context, private val list: MutableList<TvShowDetails>,var callback: ((View,TvShowDetails,ClickState) ->Unit)) : RecyclerView.Adapter<watchlistRecyclerViewAdapter.WatchlistCardViewHolder>() {
 
     private val WATCHLIST_TYPE = 1
     private val FAVORITES_TYPE = 2
-    // class WatchlistCardViewHolder(var recyclerviewbinding: WatchlistLayoutItemBinding) : RecyclerView.ViewHolder(recyclerviewbinding.root)
 
     class WatchlistCardViewHolder : RecyclerView.ViewHolder {
         var watchlist_Binding: WatchlistLayoutItemBinding? = null
@@ -34,7 +34,7 @@ class watchlistRecyclerViewAdapter(var context: Context, private val list: Mutab
     }
 
     override fun getItemViewType(position: Int): Int {
-        if (list[position].currentFragment.equals("watchlist")) {
+        if (list[position].currentFragment == "watchlist") {
             return WATCHLIST_TYPE
         } else
             return FAVORITES_TYPE
@@ -59,21 +59,24 @@ class watchlistRecyclerViewAdapter(var context: Context, private val list: Mutab
 
             holder.watchlist_Binding?.tvShow = list[position]
             holder.itemView.watchlist_layout.setOnClickListener {
-                listener.onClick(it, list[position])
+                callback.invoke(it,list[position],ClickState.MoreInfo)
             }
             holder.itemView.delete_icon.setOnClickListener {
-                listener.onDeleteIconClick(list[position].id, list[position].name)
+                callback.invoke(it,list[position],ClickState.deleteIcon)
+            }
+            holder.itemView.notification_icon.setOnClickListener {
+                callback.invoke(it,list[position],ClickState.NotificationClick)
             }
 
         } else if (holder.itemViewType == FAVORITES_TYPE) {
 
             holder.favorites_Binding?.tvShow = list[position]
             holder.itemView.fav_layout.setOnClickListener {
-                listener.onClick(it, list[position])
+                 callback.invoke(it,list[position],ClickState.MoreInfo)
             }
             holder.itemView.delete_icon.setOnClickListener {
-                listener.onDeleteIconClick(list[position].id, list[position].name)
-            }
+                callback.invoke(it,list[position],ClickState.deleteIcon)
+             }
 
         }
 
@@ -87,5 +90,10 @@ class watchlistRecyclerViewAdapter(var context: Context, private val list: Mutab
         list.clear()
         list.addAll(newList)
         notifyDataSetChanged()
+    }
+
+    fun underNotification(obj: TvShowDetails, b: Boolean) {
+         list.find { it.id == obj.id }?.underNotification=b
+         notifyDataSetChanged()
     }
 }

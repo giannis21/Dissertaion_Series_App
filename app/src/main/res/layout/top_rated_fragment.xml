@@ -55,7 +55,7 @@
         android:id="@+id/arrow_up_topRated"
         android:layout_width="48dp"
         android:layout_height="52dp"
-        android:layout_gravity="bottom|left"
+        android:layout_gravity="bottom|right"
         android:layout_marginStart="16dp"
         android:layout_marginBottom="16dp"
         android:background="@drawable/circled_background"

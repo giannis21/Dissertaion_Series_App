@@ -4,11 +4,13 @@ package com.example.tvshows.data
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.room.Query
 import com.example.tvshows.TvShowDao
 import com.example.tvshows.data.network.response.details.TvShowDetails
 import com.example.tvshows.data.network.response.nowPlaying.NowPlaying
 import com.example.tvshows.tvshows.utils.PreferenceUtils
 import kotlinx.coroutines.*
+import timber.log.Timber
 import java.lang.Exception
 import java.util.*
 
@@ -30,22 +32,18 @@ class local_repository(private val tvShowDao: TvShowDao) {
     }
 
 
-    suspend fun deleteAllFromNowPlaying(viewModelScope: CoroutineScope) {
-        viewModelScope.launch(Dispatchers.IO) {
-            tvShowDao.deleteAllFromNowPlaying()
-        }
 
-    }
 
     //-----------------------------Most popular methods-----------------------------//
     suspend fun getMostPopularPerPage(page: Int): NowPlaying {
         return tvShowDao.getMostPopularPerPage(page)
     }
 
-    suspend fun deleteAllFromPopular() {
-        return tvShowDao.deleteAllFromPopular()
+    suspend fun deleteAllFromMostPopular(viewModelScope: CoroutineScope) {
+        viewModelScope.launch(Dispatchers.IO) {
+            tvShowDao.deleteAllFromPopular()
+        }
     }
-
     //-----------------------------Top rated methods-----------------------------//
     suspend fun getTopRated(page: Int): NowPlaying {
         return tvShowDao.getTopRated(page)
@@ -53,10 +51,24 @@ class local_repository(private val tvShowDao: TvShowDao) {
 
 
     fun insertTvshowDetailstoDb(tvShow: TvShowDetails, viewModelScope: CoroutineScope): Job {
-        return viewModelScope.launch(Dispatchers.IO) {
-            tvShowDao.insertToTvShowDetails(tvShow)
+        var supervisorJob1 = SupervisorJob()
+        return viewModelScope.launch {
+            runCatching {
+                tvShowDao.insertToTvShowDetails(tvShow)
+            }.onFailure {
+                Timber.e("ssssssss failed $it")
+            }.onSuccess {
+                Timber.e("ssssssss insert success $it")
+            }
+
         }
     }
+    suspend fun deleteAllFromTop(viewModelScope: CoroutineScope) {
+        viewModelScope.launch(Dispatchers.IO) {
+            tvShowDao.deleteAllFromTop()
+        }
+    }
+
 
     //-----------------------------watchlist methods-----------------------------//
     fun getWatchlist(): LiveData<MutableList<TvShowDetails>> {
@@ -67,6 +79,9 @@ class local_repository(private val tvShowDao: TvShowDao) {
         return tvShowDao.getTvShowDetails(id)
     }
 
+     fun getTvShowDetailsAll(): LiveData<MutableList<TvShowDetails>> {
+        return tvShowDao.getTvShowDetailsAll()
+    }
     suspend fun deleteTvShowFromWatchlist(id: String) {
         tvShowDao.deleteTvShowFromWatchlist(id)
     }
@@ -132,16 +147,7 @@ class local_repository(private val tvShowDao: TvShowDao) {
 
     //------------------------DEtails----------------------------------//
 
-    suspend fun rowExists(
-        id: String,
-        currentFragment: String,
-        viewModelScope: CoroutineScope
-    ): Boolean {
-        return tvShowDao.RowExists(id, currentFragment)
-    }
-
-
-
+    suspend fun rowExists(id: String, currentFragment: String, viewModelScope: CoroutineScope): Boolean { return tvShowDao.RowExists(id, currentFragment) }
 
 
     fun fetchNeeded(context: Context): Boolean {
@@ -151,13 +157,29 @@ class local_repository(private val tvShowDao: TvShowDao) {
         val minutes = timeInMilli / (60 * 1000)
         val lastTime = PreferenceUtils.getLastTime(context).toInt()
 
-        if (minutes - lastTime > 0) {
+        if (minutes - lastTime > 60) {
             PreferenceUtils.setLastTime(minutes.toString(), context)
+            println("SSSSSSS  $minutes  $lastTime --- ${minutes-lastTime}")
             return true
         }
         return false
     }
 
+    suspend fun underNotification(id: String, b: Boolean,release_date:String) {
+        try {
+             tvShowDao.underNotification(id ,b)
+        } catch (e: Exception) {
+           Timber.e(e)
+        }
+    }
+
+    suspend fun update_exact_time_of_notification(id: String, date: String)  {
+        try {
+            tvShowDao.update_exact_time_of_notification(id ,date)
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
+    }
 
 
 }
