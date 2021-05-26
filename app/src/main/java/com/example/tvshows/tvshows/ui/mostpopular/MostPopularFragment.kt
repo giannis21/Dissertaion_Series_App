@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.AbsListView
 import androidx.activity.addCallback
 import androidx.lifecycle.Observer
@@ -65,7 +66,7 @@ class MostPopularFragment : Fragment(), GenresClickCallback {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
+        (activity as? MainActivity)?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
         val list: MutableList<Result_NowPlaying> = mutableListOf()
         manager = LinearLayoutManager(this.context)
         recyclerview_popular.layoutManager = manager
@@ -165,9 +166,11 @@ class MostPopularFragment : Fragment(), GenresClickCallback {
             if(!filteredList.isEmpty()){
                 adapter.clear()
                 adapter.submitList(filteredList,"MostPopular","")
+                nowShowFoundPop.visibility=View.GONE
             }else {
+                nowShowFoundPop.visibility=View.VISIBLE
                 adapter.clear()
-                viewModel.getMostPopularPerPage(++pages_counterP)
+               // viewModel.getMostPopularPerPage(++pages_counterP)
             }
         }
     }

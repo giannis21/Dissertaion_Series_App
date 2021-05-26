@@ -67,3 +67,4 @@ class Details_dialogs(var context: Context) {
         alertDialog1.dismiss()
     }
 }
+

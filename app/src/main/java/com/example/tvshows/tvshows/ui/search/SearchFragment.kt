@@ -134,6 +134,10 @@ class SearchFragment : Fragment() {
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        context?.hideKeyboard(requireView())
+    }
     fun navigateTo(id: Int) {
         if (netMethods.hasInternet(requireContext(), true)) {
             val action = SearchFragmentDirections.actionSearchFragmentToShowDetailsFragment(id, "searchFragment")

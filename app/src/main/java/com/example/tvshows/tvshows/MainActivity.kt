@@ -11,7 +11,11 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
 import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.motion.widget.MotionLayout
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavDirections
@@ -19,6 +23,8 @@ import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import com.example.tvshows.data.netMethods
 import com.example.tvshows.tvshows.ui.callbacks.OnFragmentNavigationListener
+import com.example.tvshows.tvshows.utils.PreferenceUtils.Companion.isFirstTime
+import com.example.tvshows.tvshows.utils.PreferenceUtils.Companion.set_FirstTime
 import com.example.tvshows.ui.mostpopular.MainModelFactory
 import com.example.tvshows.ui.nowplaying.NowPlayingFragment
 import com.example.tvshows.ui.seen.MainViewModel
@@ -27,6 +33,7 @@ import com.example.tvshows.utils.Extension_Utils.Companion.iSVisible
 import com.example.tvshows.utils.Extension_Utils.Companion.info_toast
 import com.example.tvshows.utils.Extension_Utils.Companion.setGone
 import com.example.tvshows.utils.Extension_Utils.Companion.setVisible
+import com.skydoves.balloon.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.banner_layout.view.*
@@ -44,7 +51,7 @@ class MainActivity : AppCompatActivity(), OnFragmentNavigationListener {
     private var topIconVisible = false
     private var searchcontainerOpened = false
     private var chipsContainerOpened = false
-
+    private lateinit var motion_container :MotionLayout
     companion object {
         lateinit var showProgressBar: ((Boolean) -> Unit)
     }
@@ -56,6 +63,9 @@ class MainActivity : AppCompatActivity(), OnFragmentNavigationListener {
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         setStatusBarColor()
 
+
+        //motion_container  =motionLayoutId.findViewById<MotionLayout>(R.id.motion_main_container)
+        toolbar_main.title = "Now Playing"
         showProgressBar = { showProgressBar ->
             if (showProgressBar) {
                 progressBar.visibility = View.VISIBLE
@@ -67,7 +77,7 @@ class MainActivity : AppCompatActivity(), OnFragmentNavigationListener {
         frameLayout = findViewById(R.id.frameLayout)
         viewModelFactory = MainModelFactory(this)
         viewModel = ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
-        constraintLayoutNavBar.setOnClickListener { }
+        motionLayoutId.findViewById<ConstraintLayout>(R.id.constraintLayoutNavBar).setOnClickListener { }
 //        appBarConfig = AppBarConfiguration(
 //            setOf(
 //                R.id.now_playing,
@@ -82,9 +92,15 @@ class MainActivity : AppCompatActivity(), OnFragmentNavigationListener {
 //        )
 
         val navController = Navigation.findNavController(this, R.id.nav_host_fragment)
+
+
+
+
+
         //   setupActionBarWithNavController(navController, appBarConfig)
         //  nav_view.setupWithNavController(navController)
         viewModel.loadJSONFromAsset(chipsPrograms)
+
         navController.addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id == R.id.showDetailsFragment || destination.id == R.id.seen ||
                 destination.id == R.id.favorites || destination.id == R.id.watchlist || destination.id == R.id.settings || destination.id == R.id.searchFragment
@@ -97,6 +113,12 @@ class MainActivity : AppCompatActivity(), OnFragmentNavigationListener {
                 moveMainContainer("up")
                 moveMainContainerForChips("up")
                 searchHereEdittext.isEnabled = false
+                text_input_layout.visibility = View.GONE
+            }
+            if(destination.id == R.id.showDetailsFragment || destination.id == R.id.searchFragment){
+                supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            }else{
+                supportActionBar?.setDisplayHomeAsUpEnabled(false)
             }
             updateAppTitle(destination.id)
         }
@@ -119,12 +141,30 @@ class MainActivity : AppCompatActivity(), OnFragmentNavigationListener {
         searchOnline.setOnClickListener {
             searchHereEdittext.isEnabled = false
             searchcontainer.visibility = View.GONE
-            supportActionBar?.setDisplayHomeAsUpEnabled(true)
             moveMainContainer("up")
             goToSearchFragment()
         }
 
-        SetGlobalActionListeners()
+        setGlobalActionListeners()
+
+        intent?.extras?.getString("id")?.let {
+            val dataBundle = Bundle()
+            dataBundle.putInt("id", it.toInt())
+            dataBundle.putString("deriveFrom", "deepLink")
+
+            navController.setGraph(R.navigation.mobile_navigation)
+            navController.navigate(R.id.showDetailsFragment, dataBundle)
+            toolbar_main.title = "Tv Show Details"
+        } ?: kotlin.run {
+            intent?.extras?.getString("deriveFrom")?.let {
+                if(it == "deepLinkWatchlist"){
+                    navController.setGraph(R.navigation.mobile_navigation)
+                    navController.navigate(R.id.watchlist)
+                    toolbar_main.title = "Watchlist"
+                }
+
+            }
+        }
 
     }
 
@@ -142,55 +182,88 @@ class MainActivity : AppCompatActivity(), OnFragmentNavigationListener {
         }
     }
 
-    private fun SetGlobalActionListeners() {
-        mostPopulartext.setOnClickListener {
+    private fun setGlobalActionListeners() {
+        motionLayoutId.findViewById<TextView>(R.id.mostPopulartext).setOnClickListener {
             findNavController(R.id.nav_host_fragment).navigate(R.id.action_global_Popular)
         }
-        mostPopIcon.setOnClickListener {
+        motionLayoutId.findViewById<ImageView>(R.id.mostPopIcon).setOnClickListener {
             findNavController(R.id.nav_host_fragment).navigate(R.id.action_global_Popular)
         }
-        nowPlayingIcon.setOnClickListener {
+        motionLayoutId.findViewById<ImageView>(R.id.nowPlayingIcon).setOnClickListener {
             findNavController(R.id.nav_host_fragment).navigate(R.id.action_global_now_playing)
         }
-        nowPlayingTxt.setOnClickListener {
+        motionLayoutId.findViewById<TextView>(R.id.nowPlayingTxt).setOnClickListener {
             findNavController(R.id.nav_host_fragment).navigate(R.id.action_global_now_playing)
         }
-        TopRatedicon.setOnClickListener {
+        motionLayoutId.findViewById<ImageView>(R.id.TopRatedicon).setOnClickListener {
             findNavController(R.id.nav_host_fragment).navigate(R.id.action_global_Top_Rated)
         }
-        TopRatedTxt.setOnClickListener {
+        motionLayoutId.findViewById<TextView>(R.id.TopRatedTxt).setOnClickListener {
             findNavController(R.id.nav_host_fragment).navigate(R.id.action_global_Top_Rated)
         }
-        watchlistIicon.setOnClickListener {
+        motionLayoutId.findViewById<ImageView>(R.id.watchlistIicon).setOnClickListener {
             findNavController(R.id.nav_host_fragment).navigate(R.id.action_global_watchlist)
         }
-        watchlisttxt.setOnClickListener {
+        motionLayoutId.findViewById<TextView>(R.id.watchlisttxt).setOnClickListener {
             findNavController(R.id.nav_host_fragment).navigate(R.id.action_global_watchlist)
         }
-        favoritesIcon.setOnClickListener {
+        motionLayoutId.findViewById<ImageView>(R.id.favoritesIcon).setOnClickListener {
             findNavController(R.id.nav_host_fragment).navigate(R.id.action_global_favorites)
         }
-        favoritestxt.setOnClickListener {
+        motionLayoutId.findViewById<TextView>(R.id.favoritestxt).setOnClickListener {
             findNavController(R.id.nav_host_fragment).navigate(R.id.action_global_favorites)
         }
-        seenIcon.setOnClickListener {
+        motionLayoutId.findViewById<ImageView>(R.id.seenIcon).setOnClickListener {
             findNavController(R.id.nav_host_fragment).navigate(R.id.action_global_seen)
         }
-        seentxt.setOnClickListener {
+        motionLayoutId.findViewById<TextView>(R.id.seentxt).setOnClickListener {
             findNavController(R.id.nav_host_fragment).navigate(R.id.action_global_seen)
         }
-        closeIcon.setOnClickListener {
-            motionLayoutId.visibility = View.GONE
+        motionLayoutId.findViewById<ImageView>(R.id.settingsIcon).setOnClickListener {
+            findNavController(R.id.nav_host_fragment).navigate(R.id.action_global_settings)
+        }
+        motionLayoutId.findViewById<TextView>(R.id.settingstxt).setOnClickListener {
+            findNavController(R.id.nav_host_fragment).navigate(R.id.action_global_settings)
+        }
+        motionLayoutId.findViewById<ImageView>(R.id.closeIcon).setOnClickListener {
+            if(isFirstTime(this)){
+                createBaloon()
+                set_FirstTime(false,this)
+            }
+
             topIconVisible = true
+            motionLayoutId.visibility = View.GONE
             invalidateOptionsMenu() //ξανα καλειται η onPrepareOptionsMenu
-            motionLayoutId.transitionToStart()
+
+            val id= motionLayoutId.findViewById<MotionLayout>(R.id.motionLayoutId)
+            id?.transitionToStart()
+
         }
+    }
+
+    private fun createBaloon() {
+        val balloon = createBalloon(this.applicationContext) {
+            setArrowSize(15)
+            setWidthRatio(0.98f)
+            setWidth(BalloonSizeSpec.WRAP)
+            setHeight(65)
+            setArrowPosition(0.945f)
+            setCornerRadius(4f)
+            setTextSize(15f)
+            setArrowOrientation(ArrowOrientation.TOP)
+            setText("Here you can show side menu again!")
+            setTextColorResource(android.R.color.background_dark)
+            setBackgroundColorResource(R.color.textColorPrimary)
+            setBalloonAnimation(BalloonAnimation.ELASTIC)
+            setLifecycleOwner(lifecycleOwner)
+        }
+        include.showAlignBottom(balloon)
+        balloon.dismissWithDelay(5000L)
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         val topMenuIcon = menu.findItem(R.id.TopMenuIcon)
-
-        topMenuIcon.setVisible(topIconVisible)
+        topMenuIcon.isVisible = topIconVisible
         return true
     }
 
@@ -287,7 +360,8 @@ class MainActivity : AppCompatActivity(), OnFragmentNavigationListener {
                 } else {
                     showHide = true
                     searchcontainer.visibility = View.GONE
-                    goToSearchFragment()
+                    if(findNavController(R.id.nav_host_fragment).currentDestination?.id != R.id.searchFragment)
+                        goToSearchFragment()
                 }
 
             }
@@ -300,7 +374,7 @@ class MainActivity : AppCompatActivity(), OnFragmentNavigationListener {
             searchcontainer.visibility = View.GONE
             var offset = 0
             if (chipsContainerOpened)
-                offset = 47.Topx
+                offset = 47.toPx
 
             ObjectAnimator.ofFloat(main_container, "translationY", offset.toFloat()).apply {
                 duration = 1000
@@ -313,13 +387,11 @@ class MainActivity : AppCompatActivity(), OnFragmentNavigationListener {
             searchcontainer.visibility = View.VISIBLE
             var offset = 0
             if (chipsContainerOpened)
-                offset = 47.Topx
-
+                offset = 47.toPx
+            if(!searchcontainerOpened)
+                offset+= 190
             ObjectAnimator.ofFloat(
-                main_container,
-                "translationY",
-                searchcontainer.height.toFloat() + 10f + offset
-            ).apply {
+                main_container, "translationY", 10f + offset).apply {
                 duration = 1000
                 addStateListener()
                 start()
@@ -334,7 +406,7 @@ class MainActivity : AppCompatActivity(), OnFragmentNavigationListener {
         if (s == "up") {
             var offset = 0f
             if (searchcontainerOpened) {
-                offset = searchcontainer.height.toFloat() + 10f
+                offset = 190f  + 10f  //searchcontainer.height.toFloat() =190
                 searchcontainer.visibility = View.VISIBLE
             } else {
                 searchcontainer.visibility = View.GONE
@@ -349,12 +421,12 @@ class MainActivity : AppCompatActivity(), OnFragmentNavigationListener {
         } else {
             var offset = 0f
             if (searchcontainerOpened) {
-                offset = searchcontainer.height.toFloat() + 10f
+                offset = 190f + 10f //searchcontainer.height.toFloat() =190
                 searchcontainer.visibility = View.VISIBLE
             } else {
                 searchcontainer.visibility = View.GONE
             }
-            ObjectAnimator.ofFloat(main_container, "translationY", offset + 47.Topx).apply {
+            ObjectAnimator.ofFloat(main_container, "translationY", offset + 47.toPx).apply {
                 duration = 1000
                 addStateListener()
                 start()
@@ -381,7 +453,9 @@ class MainActivity : AppCompatActivity(), OnFragmentNavigationListener {
 
 
     private fun correctFragment(): Boolean {
-        if (findNavController(R.id.nav_host_fragment).currentDestination?.id == R.id.now_playing || findNavController(R.id.nav_host_fragment).currentDestination?.id == R.id.Top_Rated || findNavController(R.id.nav_host_fragment).currentDestination?.id == R.id.Popular) {
+        if (findNavController(R.id.nav_host_fragment).currentDestination?.id == R.id.now_playing ||
+            findNavController(R.id.nav_host_fragment).currentDestination?.id == R.id.Top_Rated ||
+            findNavController(R.id.nav_host_fragment).currentDestination?.id == R.id.Popular) {
             return true
         }
         return false
@@ -400,7 +474,7 @@ class MainActivity : AppCompatActivity(), OnFragmentNavigationListener {
         }
     }
 
-    val Int.Topx: Int
+   private val Int.toPx: Int
         get() = (this * Resources.getSystem().displayMetrics.density).toInt()
 
     private fun setStatusBarColor() {

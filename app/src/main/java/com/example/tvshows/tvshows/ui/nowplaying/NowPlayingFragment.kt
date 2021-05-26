@@ -6,6 +6,7 @@ import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.AbsListView
 import android.widget.ImageView
@@ -53,11 +54,7 @@ class NowPlayingFragment : Fragment(), GenresClickCallback {
     var scrollOutItems = 0
     lateinit var manager: LinearLayoutManager
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         val networkConnectionIncterceptor = this.context?.applicationContext?.let {
             NetworkConnectionIncterceptor(it)
@@ -75,6 +72,7 @@ class NowPlayingFragment : Fragment(), GenresClickCallback {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             (requireActivity() as MainActivity).onBackPressedfunction()
         }
+        (activity as? MainActivity)?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
         pages_counter = 1
         val list: MutableList<Result_NowPlaying> = mutableListOf()
         listener_genres_clicked = this
@@ -123,11 +121,9 @@ class NowPlayingFragment : Fragment(), GenresClickCallback {
 
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                currentItems =
-                    manager.childCount //Είναι τα items τα οποία βλέπω στην οθόνη του χρήστη(τα visible)
+                currentItems = manager.childCount //Είναι τα items τα οποία βλέπω στην οθόνη του χρήστη(τα visible)
                 totalItems = manager.itemCount     //Είναι τα συνολικά items τα οποία έχει η λίστα
-                scrollOutItems =
-                    manager.findFirstVisibleItemPosition()  //μετράει τα items τα οποία δεν φένονται καθώς σκρολλάρω προς τα κάτω..δηλαδή μου δείχνει τη θέση του πρώτου visible item
+                scrollOutItems = manager.findFirstVisibleItemPosition()  //μετράει τα items τα οποία δεν φένονται καθώς σκρολλάρω προς τα κάτω..δηλαδή μου δείχνει τη θέση του πρώτου visible item
 
                 if (isScrolling && (currentItems + scrollOutItems == totalItems)) {  //Αν αυτά που δεν βλέπω + αυτά που βλέπω στην οθόνη μου είναι ίσος με τον συνολικό αριθμό της λίστας
 
@@ -189,16 +185,19 @@ class NowPlayingFragment : Fragment(), GenresClickCallback {
 
     override fun genreClicked() {
 
-        if (selected_genres.isEmpty())
+        if (selected_genres.isEmpty()){
+            nowShowFoundNow?.visibility=View.GONE
             adapter.submitList(list_allGenres, "nowPlayingFragment", "")
-        else {
+        } else {
             val filteredList = filterList(list_allGenres)
             if (filteredList.isNotEmpty()) {
                 adapter.clear()
                 adapter.submitList(filteredList, "nowPlayingFragment", "")
+                nowShowFoundNow?.visibility=View.GONE
             } else {
+                nowShowFoundNow?.visibility=View.VISIBLE
                 adapter.clear()
-                viewModel.get_now_playing_per_page(++pages_counter)
+               // viewModel.get_now_playing_per_page(++pages_counter)
             }
         }
     }

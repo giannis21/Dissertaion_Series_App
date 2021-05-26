@@ -2,11 +2,27 @@ package com.example.tvshows.tvshows.utils
 
 import android.content.Context
 import androidx.preference.PreferenceManager
-import com.example.tvshows.tvshows.data.network.response.Guest_Session
+import com.example.tvshows.MainActivity
 
 
 class PreferenceUtils {
     companion object {
+
+        //------------------------------First Time User-----------------------------------------------------//
+        private const val FIRSTTIME = "com.frag.firstTime"
+
+        fun isFirstTime(context: Context): Boolean {
+            val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+            return preferences.getBoolean(FIRSTTIME, true)
+        }
+
+        fun set_FirstTime(bool: Boolean, context: Context) {
+            val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
+            editor.putBoolean(FIRSTTIME, bool)
+            editor.apply()
+        }
+
+
         //------------------------------VIBRATION-----------------------------------------------------//
         private const val TIME_ID = "com.frag.time"
 

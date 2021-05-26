@@ -6,6 +6,7 @@ import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.AbsListView
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
@@ -38,6 +39,7 @@ import com.example.tvshows.utils.Extension_Utils.Companion.setGone
 import com.example.tvshows.utils.Extension_Utils.Companion.setVisible
 import com.example.tvshows.utils.Extension_Utils.Companion.success_toast
 import kotlinx.android.synthetic.main.connectivity_layout.*
+import kotlinx.android.synthetic.main.most_popular_fragment.*
 import kotlinx.android.synthetic.main.top_rated_fragment.*
 
 class TopRatedFragment : Fragment(),GenresClickCallback{
@@ -76,7 +78,7 @@ class TopRatedFragment : Fragment(),GenresClickCallback{
         super.onActivityCreated(savedInstanceState)
 
         listener_genres_clicked =this
-
+        (activity as? MainActivity)?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
         val list: MutableList<Result_NowPlaying> = mutableListOf()
         pages_counterTopRated = 1
 
@@ -173,9 +175,11 @@ class TopRatedFragment : Fragment(),GenresClickCallback{
             if(!filteredList.isEmpty()){
                 adapter.clear()
                 adapter.submitList(filteredList,"topRated","")
+                nowShowFoundTop.visibility=View.GONE
             }else {
+                nowShowFoundTop.visibility=View.VISIBLE
                 adapter.clear()
-                viewModel.getTopRatedPerPage(++pages_counterTopRated)
+               // viewModel.getTopRatedPerPage(++pages_counterTopRated)
             }
         }
     }

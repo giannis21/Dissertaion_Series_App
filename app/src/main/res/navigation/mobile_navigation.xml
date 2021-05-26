@@ -25,6 +25,7 @@
     </fragment>
     <fragment
         android:id="@+id/Popular"
+
         android:name="com.example.tvshows.ui.mostpopular.MostPopularFragment"
         android:label="@string/most_popular"
         tools:layout="@layout/most_popular_fragment" >
@@ -86,13 +87,34 @@
             app:argType="string" />
 
     </fragment>
-    <action android:id="@+id/action_global_now_playing" app:destination="@id/now_playing"/>
-    <action android:id="@+id/action_global_favorites" app:destination="@id/favorites"/>
-    <action android:id="@+id/action_global_Popular" app:destination="@id/Popular"/>
-    <action android:id="@+id/action_global_Top_Rated" app:destination="@id/Top_Rated"/>
-    <action android:id="@+id/action_global_settings" app:destination="@id/settings"/>
-    <action android:id="@+id/action_global_seen" app:destination="@id/seen"/>
-    <action android:id="@+id/action_global_watchlist" app:destination="@id/watchlist"/>
+    <action android:id="@+id/action_global_now_playing"
+        app:destination="@id/now_playing"
+        app:popUpToInclusive="false"/>
+
+    <action android:id="@+id/action_global_favorites"
+        app:destination="@id/favorites"
+        app:popUpToInclusive="false"/>
+
+    <action android:id="@+id/action_global_Popular"
+        app:destination="@id/Popular"
+        app:popUpToInclusive="false"/>
+
+    <action android:id="@+id/action_global_Top_Rated"
+        app:destination="@id/Top_Rated"
+        app:popUpToInclusive="false"/>
+
+    <action android:id="@+id/action_global_settings"
+        app:destination="@id/settings"
+        app:popUpToInclusive="false"/>
+
+    <action android:id="@+id/action_global_seen"
+        app:destination="@id/seen"
+        app:popUpToInclusive="false"/>
+
+    <action android:id="@+id/action_global_watchlist"
+        app:destination="@id/watchlist"
+        app:popUpToInclusive="false"/>
+
     <action android:id="@+id/action_global_searchFragment"
         app:destination="@id/searchFragment"
         app:enterAnim="@anim/from_up"

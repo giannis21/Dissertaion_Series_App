@@ -1,5 +1,6 @@
 package com.example.tvshows
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.text.Spannable
@@ -15,6 +16,7 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.core.widget.NestedScrollView
 import androidx.databinding.BindingAdapter
@@ -27,10 +29,15 @@ import com.example.tvshows.data.network.response.details.CreatedBy
 import com.example.tvshows.data.network.response.details.Genre
 import com.example.tvshows.data.network.response.details.Season
 import com.example.tvshows.data.network.response.details.TvShowDetails
+import com.example.tvshows.tvshows.SharedMethods.getDateInMilli
+import com.example.tvshows.tvshows.SharedMethods.getDateInMilli1
 import com.example.tvshows.tvshows.ui.show_details.ClickCallback
+import com.example.tvshows.tvshows.utils.PreferenceUtils
 import com.example.tvshows.utils.Extension_Utils.Companion.setGone
 import timber.log.Timber
 import java.lang.Exception
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 object bindingAdapters {
@@ -41,31 +48,55 @@ object bindingAdapters {
     @BindingAdapter(value = ["spannableInSearch", "currentSearchName"])
     @JvmStatic
     fun TextView.spannableInSearch(tvshowName1: String?, currentSearchName: String) {
-        if(currentSearchName != ""){
+        if (currentSearchName != "") {
             val tvshowName = tvshowName1?.toLowerCase()
             val tvshowNameSpan = SpannableString(tvshowName1)
             val length_of_word = currentSearchName.length
             try {
                 val indexOf = tvshowName?.indexOf(currentSearchName.toLowerCase())!!
                 if (indexOf >= 0) {
-                    tvshowNameSpan.setSpan(BackgroundColorSpan(Color.WHITE),indexOf, length_of_word + indexOf, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                    tvshowNameSpan.setSpan(ForegroundColorSpan(Color.BLACK), indexOf, length_of_word + indexOf, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    tvshowNameSpan.setSpan(TextAppearanceSpan(context, R.style.caption_bold), 0, tvshowName.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    tvshowNameSpan.setSpan(
+                        BackgroundColorSpan(Color.WHITE),
+                        indexOf,
+                        length_of_word + indexOf,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                    tvshowNameSpan.setSpan(
+                        ForegroundColorSpan(Color.BLACK),
+                        indexOf,
+                        length_of_word + indexOf,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    );
+                    tvshowNameSpan.setSpan(
+                        TextAppearanceSpan(context, R.style.caption_bold),
+                        0,
+                        tvshowName.length,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
                     this.text = tvshowNameSpan
                 } else {
-                    tvshowNameSpan.setSpan(TextAppearanceSpan(context, R.style.caption), 0, tvshowName.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    tvshowNameSpan.setSpan(
+                        TextAppearanceSpan(context, R.style.caption),
+                        0,
+                        tvshowName.length,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
                     this.text = tvshowNameSpan
                 }
             } catch (e: Exception) {
-                tvshowNameSpan.setSpan(TextAppearanceSpan(context, R.style.caption), 0, tvshowName?.length!!, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                tvshowNameSpan.setSpan(
+                    TextAppearanceSpan(context, R.style.caption),
+                    0,
+                    tvshowName?.length!!,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
                 this.text = tvshowNameSpan
             }
-        }else{
+        } else {
             this.text = tvshowName1
         }
 
     }
-
 
 
     @BindingAdapter("imageUrl", "progressbar")
@@ -104,12 +135,23 @@ object bindingAdapters {
 
         Glide.with(view.context).load("https://image.tmdb.org/t/p/w500/$url")
             .listener(object : RequestListener<Drawable> {
-                override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    isFirstResource: Boolean
+                ): Boolean {
                     progressBar.setGone()
                     return false
                 }
 
-                override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                override fun onResourceReady(
+                    resource: Drawable?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    dataSource: DataSource?,
+                    isFirstResource: Boolean
+                ): Boolean {
                     progressBar.setGone()
                     return false
                 }
@@ -223,28 +265,43 @@ object bindingAdapters {
     @BindingAdapter("updateDrawable")
     @JvmStatic
     fun updateDrawable(view: ImageView, tvShowDetails: TvShowDetails) {
-        //view.setImageDrawable(ResourcesCompat.getDrawable(view.resources, R.drawable.ic_event, null))
-        Timber.e("dateeeee  ${tvShowDetails.next_episode_to_air?.air_date.toString()}")
+
         if (tvShowDetails.underNotification)
             view.setColorFilter(ContextCompat.getColor(view.context, R.color.white))
         else
             view.setColorFilter(ContextCompat.getColor(view.context, R.color.colorPrimary))
-        var a = System.currentTimeMillis()
-        var b=tvShowDetails.exactDateOfNotification
 
+        if (tvShowDetails.exactDateOfNotification != "") {
+            val dateOfNot = tvShowDetails.exactDateOfNotification
+           //an μπει στο παρακατω ελεγχο σημαινει πως η ειδοποιηση εχει εμφανιστει
+            if ((getDateInMilli1(dateOfNot) < Calendar.getInstance().timeInMillis) || tvShowDetails.next_episode_to_air?.air_date.isNullOrEmpty()) {
+                view.setColorFilter(ContextCompat.getColor(view.context, R.color.notification_stoped))
+                view.isEnabled = false
+                view.visibility=View.GONE
+            } else {
+                view.isEnabled = true
+            }
+        } else {
+            if (tvShowDetails.next_episode_to_air == null) { //αν δεν εχει ημερομηνια δεν πρεπει να μπορω να πατησω το icon της ειδοποιησης
+                view.setColorFilter(ContextCompat.getColor(view.context, R.color.notification_stoped))
+                view.isEnabled = false
+                view.visibility=View.GONE
+            }
 
-//        if(tvShowDetails.exactDateOfNotification != ""){
-//            val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-//            val now= sdf.format(Calendar.getInstance().time)
-//            val dateOfNot = tvShowDetails.exactDateOfNotification
-//
-//            if (dateOfNot < now  || tvShowDetails.next_episode_to_air?.air_date == "") {
-//                view.setColorFilter(ContextCompat.getColor(view.context, R.color.notification_stoped))
-//                view.isEnabled=false
-//            }else{
-//                view.isEnabled=true
-//            }
-//        }
+            tvShowDetails.next_episode_to_air?.let {  //εδω γινεται ελεγχος αν περασε η ωρα απ αυτη που εχω ορισει στις ρυθμισεις
+
+                val preferredTime1 = PreferenceUtils.get_preferred_time((view.context))!!.split(":")
+                val time = preferredTime1[0]
+                val minutes = preferredTime1[1]
+                val temp = tvShowDetails.next_episode_to_air.air_date + " " + time + ":" + minutes + ":10" //παιρνω την ημερομηνια που βγαινει το επεισοδιο και προσθετω την ωρα που εχω ορισει εγω στις ρυθμισεις
+
+                if (getDateInMilli1(temp) < Calendar.getInstance().timeInMillis) {
+                    view.setColorFilter(ContextCompat.getColor(view.context, R.color.notification_stoped))
+                    view.isEnabled = false
+                }
+            }
+
+        }
 
 
     }

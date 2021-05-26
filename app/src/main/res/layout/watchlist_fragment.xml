@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.favorites.FavoritesFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.nowplaying.NowPlayingFragment">
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/product_grid"
@@ -20,9 +24,9 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
-            android:scrollbars="horizontal"
+            android:layout_height="match_parent"
             android:scrollbarThumbVertical="@drawable/scrollbar_style"
-            android:layout_height="match_parent" />
+            android:scrollbars="horizontal" />
 
     </androidx.core.widget.NestedScrollView>
 
@@ -38,4 +42,18 @@
         android:text="No Tv shows found!"
         android:textColor="@color/textColorPrimary"
         android:textSize="26sp" />
+
+
+
 </RelativeLayout>
+    <ImageView
+        android:id="@+id/fab_watchlist"
+        android:layout_marginEnd="16dp"
+        android:layout_width="48dp"
+        android:layout_gravity="bottom|right"
+        android:layout_height="48dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="10dp"
+        android:padding="9dp"
+        android:src="@android:drawable/ic_dialog_info" />
+</FrameLayout>

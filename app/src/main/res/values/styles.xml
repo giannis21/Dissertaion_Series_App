@@ -8,12 +8,12 @@
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
         <item name="android:windowBackground">@color/windowBackGround</item>
         <item name="android:textColorPrimary">@color/textColorPrimary</item>
-
         <item name="android:typeface">monospace</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
         <item name="android:fontFamily">@style/caption</item> .
     </style>
+
 
     <style name="SwitchTheme" parent="Theme.AppCompat.Light">
         <item name="android:colorControlActivated">@color/red</item>
@@ -22,8 +22,6 @@
     <style name="AppTheme.GenderChip" parent="TextAppearance.MaterialComponents.Chip">
         <item name="android:textSize">18sp</item>
         <item name="android:textStyle">bold</item>
-
-
     </style>
 
     <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">

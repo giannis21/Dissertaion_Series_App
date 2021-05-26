@@ -53,15 +53,28 @@
         android:layout_height="wrap_content" />
     <ImageView
         android:id="@+id/arrow_up_popular"
-        android:layout_width="48dp"
-        android:layout_height="52dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:padding="9dp"
         android:layout_gravity="bottom|right"
         android:layout_marginStart="16dp"
         android:layout_marginBottom="16dp"
         android:background="@drawable/circled_background"
-        android:padding="4dp"
         android:src="@drawable/arrow_up"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
+    <ImageView
+        android:id="@+id/nowShowFoundPop"
+        android:layout_width="match_parent"
+        android:layout_height="215dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:src="@drawable/no_results"
+        android:text="No Tv shows found!"
+        android:textColor="@color/textColorPrimary"
+        android:textSize="26sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
 </FrameLayout>
